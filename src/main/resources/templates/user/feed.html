@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Community Feed | Reader Cafe</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { background: #f4efe9; color: #3c2b20; font-family: 'DM Sans', sans-serif; }
+        
+        .feed-wrapper { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Glass & Shadow Card Animation */
+        .feed-card {
+            background: #ffffff; border-radius: 24px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(60, 43, 32, 0.05); border: 1px solid rgba(231, 222, 215, 0.6);
+            margin-bottom: 30px; transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .feed-card:hover {
+            transform: translateY(-3px); box-shadow: 0 15px 35px rgba(60, 43, 32, 0.09);
+        }
+
+        /* What's on your mind Trigger Box */
+        .whats-on-mind-btn {
+            background: #f8f4f0; border: 1px solid #e7ded7; border-radius: 30px;
+            padding: 14px 22px; width: 100%; text-align: left; color: #9b8779;
+            font-weight: 500; font-size: 15px; cursor: pointer; transition: all 0.2s;
+        }
+        .whats-on-mind-btn:hover { background: #efe8e1; color: #3c2b20; }
+
+        .avatar-circle {
+            width: 48px; height: 48px; border-radius: 50%; background: #e8ded5;
+            color: #402b1e; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+
+        /* Mentioned Book Card Style */
+        .mentioned-book-card {
+            background: linear-gradient(135deg, #fdfaf7 0%, #f7f0e8 100%);
+            border: 1px solid #eae0d8; border-radius: 18px; padding: 16px;
+            display: flex; gap: 16px; align-items: center; margin-top: 15px;
+            text-decoration: none; color: inherit; transition: background 0.2s;
+        }
+        .mentioned-book-card:hover { background: #f2e7dc; color: inherit; }
+        .mentioned-book-card img { width: 60px; height: 85px; object-fit: cover; border-radius: 10px; }
+
+        .btn-theme { background: #402b1e; color: white; border-radius: 25px; padding: 10px 24px; font-weight: 600; border: none; }
+        .btn-theme:hover { background: #5a4030; color: white; }
+
+        .action-btn { color: #6e5d51; font-weight: 600; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .action-btn:hover { color: #402b1e; }
+    </style>
+</head>
+<body>
+
+<div class="feed-wrapper">
+    
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0" style="font-family: 'Playfair Display', serif;">Reader Community</h2>
+        <a th:href="@{/user/home}" class="btn btn-outline-dark btn-sm rounded-pill"><i class="fas fa-arrow-left me-1"></i> Back to Books</a>
+    </div>
+
+    <!-- 1. WHAT'S ON YOUR MIND TRIGGER CARD -->
+    <div class="feed-card">
+        <div class="d-flex align-items-center gap-3">
+            <!-- <div class="avatar-circle"><i class="fas fa-user"></i></div> -->
+             <!-- User Avatar Link -->
+                <a >
+                    <img th:if="${usernow.profileImageUrl != null && !usernow.profileImageUrl.empty}" 
+                         th:src="${usernow.profileImageUrl}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                    <img th:unless="${usernow.profileImageUrl != null && !usernow.profileImageUrl.empty}" 
+                         src="https://api.dicebear.com/7.x/bottts/svg?seed=Reader" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+            <button class="whats-on-mind-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                What's on your mind? Share a book or thought...
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. POST LIST -->
+    <div th:each="post : ${posts}" class="feed-card">
+        <!-- Post Author Info -->
+        <!-- <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="avatar-circle"><i class="fas fa-user"></i></div>
+            <div>
+                <h6 class="mb-0 fw-bold" th:text="${post.user.name != null ? post.user.name : post.user.email}">User Name</h6>
+                <small class="text-muted" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, hh:mm a')}">Time</small>
+            </div>
+        </div> -->
+        <div class="d-flex align-items-center gap-2 mb-2">
+    <!-- User Avatar Link -->
+    <a th:href="@{/user/profile/{id}(id=${post.user.id})}">
+        <img th:if="${post.user.profileImageUrl != null && !post.user.profileImageUrl.empty}" 
+             th:src="${post.user.profileImageUrl}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+        <img th:unless="${post.user.profileImageUrl != null && !post.user.profileImageUrl.empty}" 
+             src="https://api.dicebear.com/7.x/bottts/svg?seed=Reader" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+    </a>
+
+    <div>
+        <!-- User Name Link -->
+        <a th:href="@{/user/profile/{id}(id=${post.user.id})}" class="text-decoration-none text-dark fw-bold" style="font-size: 0.95rem;">
+            <span th:text="${post.user.name}">Author Name</span>
+            <i th:if="${post.user.isPremium}" class="fa-solid fa-crown text-warning ms-1" style="font-size: 0.85rem;"></i>
+        </a>
+        <small class="d-block text-muted" style="font-size: 0.75rem;" 
+               th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'dd MMM yyyy hh:mm a') : ''}">Date</small>
+    </div>
+</div>
+
+        <!-- Caption -->
+        <p class="fs-6 text-dark mb-2" style="white-space: pre-line;" th:text="${post.caption}">User Caption</p>
+
+        <!-- Optional Mentioned Book Card (Favorite ထဲက ရွေးထားလျှင်သာ ပေါ်မည်) -->
+        <a th:if="${post.book != null}" th:href="@{/user/books/detail/{id}(id=${post.book.id})}" class="mentioned-book-card">
+            <img th:src="${post.book.coverImageUrl != null ? post.book.coverImageUrl : 'https://via.placeholder.com/60x85'}" alt="Book Cover">
+            <div>
+                <span class="badge bg-warning text-dark mb-1"><i class="fas fa-star me-1"></i> Mentioned Favorite</span>
+                <h6 class="mb-1 fw-bold text-dark" th:text="${post.book.title}">Book Title</h6>
+                <small class="text-muted" th:text="'Author: ' + ${post.book.author}">Author Name</small>
+            </div>
+        </a>
+
+        <!-- Actions (Discussion link သို့ သွားမည်) -->
+        <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top">
+            <!-- Like Button Form -->
+        
+            <!-- Reload မဖြစ်သော Like Button -->
+            <button type="button" 
+                    class="btn btn-link p-0 text-decoration-none action-btn toggle-like-btn" 
+                    th:data-post-id="${post.id}">
+        
+                <i class="fa-heart me-1" 
+                   th:id="'like-icon-' + ${post.id}"
+                   th:classappend="${likedPostIds.contains(post.id)} ? 'fas text-danger' : 'far text-secondary'"></i>
+        
+                <span th:id="'like-count-' + ${post.id}" 
+                      th:text="${post.likes != null ? post.likes.size() : 0}">0</span> Likes
+            </button>
+            <a th:href="@{/user/feed/discussion/{id}(id=${post.id})}" class="action-btn">
+                <i class="far fa-comments me-1"></i> Discussion (<span th:text="${post.comments != null ? post.comments.size() : 0}">0</span>)
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CREATE POST MODAL ================= -->
+<div class="modal fade" id="createPostModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-header-title fw-bold">Create Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/user/feed/create}" method="post">
+                <div class="modal-body">
+                    <!-- Favorite Book Select (Optional) -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted"><i class="fas fa-bookmark me-1"></i> Mention Book from Favorites (Optional)</label>
+                        <select name="bookId" class="form-select rounded-3">
+                            <option value="">-- No Book Mentioned --</option>
+                            <option th:each="b : ${favoriteBooks}" th:value="${b.id}" th:text="${b.title + ' - ' + b.author}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Caption -->
+                    <div class="mb-3">
+                        <textarea name="caption" class="form-control rounded-3" rows="4" placeholder="What's on your mind?..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-theme w-100">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.toggle-like-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.getAttribute('data-post-id');
+            const icon = document.getElementById('like-icon-' + postId);
+            const countSpan = document.getElementById('like-count-' + postId);
+
+            // Fetch API ဖြင့် Reload မဖြစ်ဘဲ Request ပို့ခြင်း
+            fetch(`/user/feed/like/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    // Like/Unlike ပေါ်မူတည်ပြီး Icon အရောင်ပြောင်းခြင်း
+                    if (data.liked) {
+                        icon.classList.remove('far', 'text-secondary');
+                        icon.classList.add('fas', 'text-danger');
+                    } else {
+                        icon.classList.remove('fas', 'text-danger');
+                        icon.classList.add('far', 'text-secondary');
+                    }
+                    // Like အရေအတွက်ကို တိုက်ရိုက် update လုပ်ခြင်း
+                    countSpan.innerText = data.count;
+                }
+            })
+            .catch(error => console.error('Error toggling like:', error));
+        });
+    });
+});
+</script>
+</body>
+</html>

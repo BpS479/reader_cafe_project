@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Reader Cafe</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body.reader-dark-theme {
+            background-color: #111827;
+            color: #f3f4f6;
+            font-family: 'Poppins', 'Padauk', sans-serif;
+        }
+
+        .auth-card {
+            background-color: #1f2937;
+            border: 1px solid #374151 !important;
+        }
+
+        .auth-icon-box {
+            width: 65px;
+            height: 65px;
+            background-color: #fbbf24;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Auth Tabs */
+        .auth-tabs {
+            background-color: #111827;
+            border: 1px solid #374151;
+        }
+
+        .auth-tabs .btn {
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .active-tab {
+            background-color: #fbbf24 !important;
+            color: #111827 !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Inputs */
+        .dark-input {
+            background-color: #111827;
+            border: 1px solid #374151;
+            color: #f3f4f6;
+            padding: 10px 14px;
+        }
+
+        .dark-input:focus {
+            background-color: #111827;
+            border-color: #fbbf24;
+            color: #ffffff;
+            box-shadow: 0 0 0 0.25rem rgba(251, 191, 36, 0.25);
+        }
+
+        .dark-input-group {
+            background-color: #35415c;
+            border: 1px solid #0d0f13;
+            border-right: none;
+        }
+
+        .hover-warning:hover {
+            color: #fbbf24 !important;
+        }
+    </style>
+</head>
+
+<body class="reader-dark-theme d-flex align-items-center justify-content-center min-vh-100 py-4">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+ 
+                <div class="mb-3 text-start">
+                    <a href="/index"
+                        class="text-decoration-none text-secondary small d-inline-flex align-items-center gap-1 hover-warning">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </a>
+                </div>
+
+                <div class="card auth-card border-0 shadow-lg rounded-4 p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <div class="auth-icon-box mx-auto mb-3 shadow-sm">
+                            <i class="fa-solid fa-graduation-cap text-dark fs-3"></i>
+                        </div>
+                        <h3 class="fw-bold text-white mb-1">Student Portal</h3>
+                        <p class="text-secondary small">Reader Cafe Login or Register</p>
+                    </div>
+                    <!-- Error messages -->
+
+                    <!-- <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div> -->
+
+                    <!-- Logout success message -->
+
+                    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        Logout Successfully
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Registered successfully -->
+                    <div th:if="${param.registered}" class="alert alert-success text-center">
+                        You have been registered successfully.
+                    </div>
+
+                    <div class="auth-tabs d-flex p-1 rounded-pill mb-4">
+                        <button id="showLoginTab"
+                            class="flex-fill btn btn-sm rounded-pill active-tab fw-semibold">Login</button>
+                        <button id="showSignUpTab"
+                            class="flex-fill btn btn-sm rounded-pill text-secondary fw-semibold">Sign Up</button>
+                    </div>
+
+                    <form th:action="@{/login}" method="post" id="studentLoginForm" class="auth-form">
+                        <div class="mb-3 text-start">
+                            <label class="form-label small text-secondary">Student Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text dark-input-group"><i
+                                        class="fa-solid fa-id-card text-warning"></i></span>
+                                <input type="text" name="email" id="loginEmail" class="form-control  "
+                                    placeholder=" student@.com" required>
+                                 
+                            </div>
+                        </div>
+
+                        <div class="mb-4 text-start">
+                            <label class="form-label small text-secondary">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text dark-input-group"><i
+                                        class="fa-solid fa-lock text-warning"></i></span>
+                                <input type="password" name="password" id="loginPassword"
+                                    class="form-control  " placeholder="Enter Password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 rounded-3 text-dark fw-bold py-2 shadow-sm">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i> Login  
+                        </button><br>
+                        <span class="text-danger text-center" th:if="${param.error}">invalid username or password</span>
+                    </form>
+    
+                    <form th:action="@{/register}" method="post" th:object="${userDto}" id="studentSignUpForm"
+                        class="auth-form d-none">
+                        <div class="mb-3 text-start">
+                            <label class="form-label small text-secondary">Full Name</label>
+                            <input type="text" name="name" id="regName" class="form-control  "
+                                placeholder="Enter Full Name" required>
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label small text-secondary">Full Name</label>
+                            <input type="text" name="username" id="regName" class="form-control  "
+                                placeholder="Enter User Name(Must be Unique!)" required>
+                            <span th:if="${userNameError}" class="text-danger text-center" th:text="${userNameError}"></span>
+                        </div>
+
+                        
+                        <div class="mb-3 text-start">
+                            <label class="form-label small text-secondary">Email Address</label>
+                            <input type="email" name="email" id="regEmail" class="form-control  "
+                                placeholder="example@gmail.com" required>
+                            <span th:if="${emailError}" class="text-danger text-center" th:text="${emailError}"></span>
+                        </div>
+
+                        <div class="mb-4 text-start">
+                            <label class="form-label small text-secondary">Password</label>
+                            <input type="password" name="password" id="regPassword" class="form-control  "
+                                placeholder="Enter Password" required>
+                             
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label small text-secondary">Confirm Password</label>
+                            <input type="password" name="confirmPassword" id="regConfirmPassword"
+                                class="form-control  " placeholder="Confirm Password" required>
+                            <span th:if="${comfirmPasswordError}" class="text-danger text-center" th:text="${comfirmPasswordError}"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 rounded-3 text-dark fw-bold py-2 shadow-sm">
+                            <i class="fa-solid fa-user-plus me-2"></i>Sign Up
+                        </button>
+                    </form>
+
+                </div>
+
+                <div class="text-center mt-4 text-secondary small">
+                    &copy; 2026 Reader Cafe. All rights reserved.
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // const LOGGED_USER_KEY = "reader_cafe_logged_user";
+        // const STUDENTS_DB_KEY = "reader_cafe_students_db";
+
+        // // မူလ စမ်းသပ်ရန် Demo အကောင့်များ
+        // const defaultStudents = [
+        //     {
+        //         rollNo: "CS-101",
+        //         name: "Aung Aung",
+        //         email: "aung@gmail.com",
+        //         password: "123",
+        //         status: "approved"
+        //     },
+        //     {
+        //         rollNo: "CS-102",
+        //         name: "Kyaw Kyaw",
+        //         email: "kyaw@gmail.com",
+        //         password: "123",
+        //         status: "pending"
+        //     }
+        // ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // initDatabase();
+            setupTabSwitching();
+            // setupAuthHandlers();
+        });
+
+        // function initDatabase() {
+        //     if (!localStorage.getItem(STUDENTS_DB_KEY)) {
+        //         localStorage.setItem(STUDENTS_DB_KEY, JSON.stringify(defaultStudents));
+        //     }
+        // }
+
+        function setupTabSwitching() {
+            const showLoginTab = document.getElementById("showLoginTab");
+            const showSignUpTab = document.getElementById("showSignUpTab");
+            const studentLoginForm = document.getElementById("studentLoginForm");
+            const studentSignUpForm = document.getElementById("studentSignUpForm");
+            const alertBox = document.getElementById("alertBox");
+
+            if (!showLoginTab || !showSignUpTab) return;
+
+            showLoginTab.addEventListener("click", () => {
+                showLoginTab.classList.add("active-tab");
+                showLoginTab.classList.remove("text-secondary");
+                showSignUpTab.classList.remove("active-tab");
+                showSignUpTab.classList.add("text-secondary");
+
+                studentLoginForm.classList.remove("d-none");
+                studentSignUpForm.classList.add("d-none");
+                hideAlert(alertBox);
+            });
+
+            showSignUpTab.addEventListener("click", () => {
+                showSignUpTab.classList.add("active-tab");
+                showSignUpTab.classList.remove("text-secondary");
+                showLoginTab.classList.remove("active-tab");
+                showLoginTab.classList.add("text-secondary");
+
+                studentSignUpForm.classList.remove("d-none");
+                studentLoginForm.classList.add("d-none");
+                hideAlert(alertBox);
+            });
+        }
+
+        // function setupAuthHandlers() {
+        //     const studentLoginForm = document.getElementById("studentLoginForm");
+        //     const studentSignUpForm = document.getElementById("studentSignUpForm");
+        //     const alertBox = document.getElementById("alertBox");
+
+        //     // Login Logic
+        //     if (studentLoginForm) {
+        //         studentLoginForm.addEventListener("submit", (e) => {
+        //             e.preventDefault();
+        //             const rollNo = document.getElementById("loginRollNo").value.trim();
+        //             const password = document.getElementById("loginPassword").value.trim();
+
+        //             const students = JSON.parse(localStorage.getItem(STUDENTS_DB_KEY)) || [];
+        //             const user = students.find(s => s.rollNo.toLowerCase() === rollNo.toLowerCase() && s.password === password);
+
+        //             if (!user) {
+        //                 showAlert(alertBox, "danger", "Roll No သို့မဟုတ် Password မှားယွင်းနေပါသည်!");
+        //                 return;
+        //             }
+
+        //             if (user.status === "pending") {
+        //                 showAlert(alertBox, "warning", "သင့်အကောင့်သည် Admin ၏ အတည်ပြုချက် (Approval) ကို စောင့်ဆိုင်းနေဆဲဖြစ်ပါသည်။");
+        //                 return;
+        //             }
+
+        //             localStorage.setItem(LOGGED_USER_KEY, JSON.stringify(user));
+        //             showAlert(alertBox, "success", "Login အောင်မြင်ပါသည်။ Catalog သို့ ခေါ်ဆောင်သွားနေပါသည်...");
+
+        //             setTimeout(() => {
+        //                 window.location.href = "catalog.html";
+        //             }, 1000);
+        //         });
+        //     }
+
+        //     // Sign Up Logic
+        //     if (studentSignUpForm) {
+        //         studentSignUpForm.addEventListener("submit", (e) => {
+        //             e.preventDefault();
+        //             const name = document.getElementById("regName").value.trim();
+        //             const rollNo = document.getElementById("regRollNo").value.trim();
+        //             const major = document.getElementById("regMajor").value.trim();
+        //             const email = document.getElementById("regEmail").value.trim();
+        //             const password = document.getElementById("regPassword").value.trim();
+
+        //             let students = JSON.parse(localStorage.getItem(STUDENTS_DB_KEY)) || [];
+
+        //             if (students.some(s => s.rollNo.toLowerCase() === rollNo.toLowerCase())) {
+        //                 showAlert(alertBox, "danger", "ဤ Roll No ဖြင့် အကောင့်လျှောက်ထားပြီး ဖြစ်ပါသည်!");
+        //                 return;
+        //             }
+
+        //             const newStudent = {
+        //                 name,
+        //                 rollNo,
+        //                 major,
+        //                 email,
+        //                 password,
+        //                 status: "pending"
+        //             };
+
+        //             students.push(newStudent);
+        //             localStorage.setItem(STUDENTS_DB_KEY, JSON.stringify(students));
+
+        //             showAlert(alertBox, "success", "အကောင့်လျှောက်ထားမှု အောင်မြင်ပါသည်။ Admin လက်ခံအတည်ပြုပြီးမှသာ Login ဝင်နိုင်မည်ဖြစ်ပါသည်။");
+        //             studentSignUpForm.reset();
+        //         });
+        //     }
+        // }
+
+        // function showAlert(element, type, message) {
+        //     if (!element) return;
+        //     element.className = `alert alert-${type} rounded-3 mb-3 small fw-semibold d-block`;
+        //     element.textContent = message;
+        // }
+
+        // function hideAlert(element) {
+        //     if (!element) return;
+        //     element.className = "d-none";
+        //     element.textContent = "";
+        // }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - Reader Cafe Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- Bootstrap Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <!-- Font Awesome Icons (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div style="display: flex">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/admin :: aside}"></div>
+
+      <!-- Main Content -->
+      <div class="main-content" style="flex: 1">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dcc8;
+            padding-bottom: 1rem;
+          "
+        >
+          <h1 class="cafe-header" style="margin: 0">User Management</h1>
+          <div class=" ">
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-danger" type="submit">
+                Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- top nav bar -->
+        <!-- <div th:replace="~{fragments/admin :: navigation-bar}"></div> -->
+          <!-- //top nav bar -->
+        <nav    class="navbar navbar-expand-lg navbar-light bg-transparent rounded-3">
+          <div class="container-fluid">
+            <!-- <a class="navbar-brand me-3" href="#"><span class="text-warning"><i class="fas fa-coffee"></i></span> Reader Cafe</a> -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item me-3">
+                  <a class="nav-link active" aria-current="page" th:href="@{/admin/admin-dashboard}"
+                    ><i class="fas fa-dashboard"></i> Dashboard</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/admin-books}"><i class="fas fa-book"></i> Book Catalog</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/users}"><i class="fas fa-user-circle"></i> Users</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/premium-requests}"><i class="fas fa-crown"></i> Premium Request</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/view-request}"><i class="fas fa-paper-plane"></i> Requests</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/messages/admin-messages}"><i class="fas fa-message"></i> Messages</a>
+                </li>
+                 
+                 
+              </ul>
+              <form th:action="@{/admin/users}" method="get" class="d-flex">
+                <input
+                  class="form-control me-2"
+                  type="search"
+                  placeholder="Search with name, email, role"
+                  aria-label="Search"
+                  name="keyword"
+                />
+                <button class="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Users Table -->
+        <div class="cafe-card">
+          <div class="table-responsive">
+            <table>
+              <thead style="background-color: rgb(113, 64, 50)">
+                <tr>
+                  
+                  
+                  <th class="text-white">#</th>
+                  <th class="text-white">User</th>
+                  <th class="text-white">User Name</th>
+                  <th class="text-white">Email</th>
+                  <th class="text-white">Role</th>
+                  <th class="text-white">Joined Date</th>
+                  <th class="text-white">Status</th>
+                  <th class="text-white">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                 
+                <tr th:each="user : ${users}">
+                  <td >
+                    <a th:href="@{/admin/user-profile/{id}(id=${user.id})}"> 
+                       <img th:if="${user.profileImageUrl != null && !user.profileImageUrl.empty}" 
+                           th:src="${user.profileImageUrl}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                       <img th:unless="${user.profileImageUrl != null && !user.profileImageUrl.empty}" 
+                           src="https://api.dicebear.com/7.x/bottts/svg?seed=Reader" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                    </a>
+
+                  </td>
+                  <td th:text="${user.name}">User Name</td>
+                  <td><a th:href="@{/admin/user-profile/{id}(id=${user.id})}" th:text="${user.username}" class="text-decoration-none"></a></td>
+                  <!-- <td th:text="${user.username}">Username</td> -->
+                  <td th:text="${user.email}">Email</td>
+                  <td>
+                    <span class="badge bg-primary" th:text="${user.role}"
+                      >ROLE_USER</span
+                    >
+                  </td>
+                  <td th:text="${user.createdAt}">Joined Date</td>
+
+                  <!-- Status Badge (ACTIVE ဆိုလျှင် အပြာ၊ SUSPENDED ဆိုလျှင် အနီ) -->
+                  <td>
+                    <span
+                      th:if="${user.status == 'ACTIVE' || user.status == null}"
+                      class="badge bg-primary"
+                      >Active</span
+                    >
+                    <span
+                      th:if="${user.status == 'SUSPENDED'}"
+                      class="badge bg-danger"
+                      >Suspended</span
+                    >
+                  </td>
+
+                  <!-- Actions -->
+                  <td>
+                    <div class="d-flex gap-2">
+                      <!-- Chat/Message Button -->
+                      <a th:href="@{/messages/admin-messages(receiverId=${user.id})}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-chat-dots-fill"></i>
+                      </a>
+
+                      <!-- Suspend / Unsuspend Toggle Form -->
+                      <form
+                        th:action="@{/admin/users/toggle-status/{id}(id=${user.id})}"
+                        method="post"
+                        style="display: inline"
+                      >
+                        <!-- Active ဖြစ်နေလျှင် Suspend Button ပြမည် -->
+                        <button
+                          type="submit"
+                          th:if="${user.status == 'ACTIVE' || user.status == null}"
+                          class="btn btn-sm btn-danger"
+                          onclick="
+                            return confirm(
+                              'Are you sure you want to suspend this user?',
+                            );
+                          "
+                        >
+                          <i class="bi bi-slash-circle-fill me-1"></i> Suspend
+                        </button>
+
+                        <!-- Suspended ဖြစ်နေလျှင် Unsuspend / Activate Button ပြမည် -->
+                        <button
+                          type="submit"
+                          th:if="${user.status == 'SUSPENDED'}"
+                          class="btn btn-sm btn-success"
+                          onclick="
+                            return confirm(
+                              'Are you sure you want to activate this user?',
+                            );
+                          "
+                        >
+                          <i class="bi bi-check-circle-fill me-1"></i> Activate
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            style="
+              padding: 1.5rem;
+              border-top: 1px solid #e8dcc8;
+              display: flex;
+              justify-content: center;
+            "
+          >
+            <!-- <div class="pagination">
+              <a href="#">← Previous</a>
+              <span class="active">1</span>
+              <a href="#">2</a>
+              <a href="#">3</a>
+              <a href="#">Next →</a>
+            </div> -->
+            <div class="pagination" th:if="${totalPages > 1}">
+              <!-- Previous Button -->
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/users(page=${currentPage - 1}, keyword=${keyword})}"
+              >
+                ← Previous
+              </a>
+              <span class="disabled" th:if="${currentPage == 0}"
+                >← Previous</span
+              >
+
+              <!-- Page Numbers -->
+              <a
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:href="@{/admin/users(page=${i}, keyword=${keyword})}"
+                th:text="${i + 1}"
+                th:classappend="${currentPage == i} ? 'active'"
+              >
+                1
+              </a>
+
+              <!-- Next Button -->
+              <a
+                th:if="${currentPage < totalPages - 1}"
+                th:href="@{/admin/users(page=${currentPage + 1}, keyword=${keyword})}"
+              >
+                Next →
+              </a>
+              <span class="disabled" th:if="${currentPage == totalPages - 1}"
+                >Next →</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

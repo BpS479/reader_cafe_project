@@ -1,0 +1,615 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - Reader Cafe Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+     <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <!-- Font Awesome Icons (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+         * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #f8f4f0;
+        color: #3c2b20;
+        font-family: "DM Sans", sans-serif;
+      }
+       /* ================= MAIN ================= */
+
+      .detail-container {
+        max-width: 1150px;
+        margin: 45px auto;
+        padding: 0 25px;
+      }
+
+      /* Back button */
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+
+        text-decoration: none;
+        color: #6e5d51;
+
+        font-weight: 600;
+        margin-bottom: 25px;
+      }
+
+      .back-btn:hover {
+        color: #3c2b20;
+      }
+
+      /* ================= BOOK CARD ================= */
+
+      .book-detail-card {
+        background: white;
+        border-radius: 25px;
+        padding: 30px;
+
+        display: flex;
+        gap: 45px;
+
+        box-shadow: 0 10px 35px rgba(60, 43, 32, 0.08);
+      }
+
+      /* ================= BOOK IMAGE ================= */
+
+      .book-image-section {
+        width: 38%;
+      }
+
+      .book-image-card {
+        width: 100%;
+        height: 560px;
+
+        border-radius: 20px;
+        overflow: hidden;
+
+        background: #eee5de;
+      }
+
+      .book-image-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* ================= BOOK INFO ================= */
+
+      .book-info {
+        flex: 1;
+        padding: 20px 10px;
+      }
+
+      .book-info h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 42px;
+        color: #302017;
+        margin-bottom: 12px;
+      }
+
+      .author {
+        color: #9b8779;
+        font-size: 17px;
+        margin-bottom: 25px;
+      }
+
+      .author i {
+        margin-right: 8px;
+      }
+
+      /* Genre */
+
+      .genre {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        background: #baf3c0;
+        color: #276235;
+
+        padding: 8px 18px;
+        border-radius: 20px;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        margin-bottom: 30px;
+      }
+
+      /* Description */
+
+      .description-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .description {
+        color: #76685f;
+        font-size: 15px;
+        line-height: 1.8;
+
+        max-width: 600px;
+        margin-bottom: 30px;
+      }
+
+      /* ================= STATS ================= */
+
+      .stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 35px;
+      }
+
+      .stat {
+        background: #eef2ff;
+        color: #5267ae;
+
+        padding: 9px 17px;
+        border-radius: 20px;
+
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .stat i {
+        margin-right: 6px;
+      }
+
+      /* ================= BUTTONS ================= */
+
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .read-btn {
+        border: none;
+        background: #402b1e;
+        color: white;
+
+        padding: 14px 35px;
+
+        border-radius: 30px;
+
+        font-size: 15px;
+        font-weight: 600;
+
+        text-decoration: none;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .read-btn:hover {
+        background: #5a4030;
+        color: white;
+      }
+
+      .download-btn {
+        width: 50px;
+        height: 50px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: #f0e8e1;
+        color: #4a3628;
+
+        font-size: 18px;
+      }
+
+      .favorite-btn {
+        width: 50px;
+        height: 50px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: #f8e8e8;
+        color: #e94b61;
+
+        font-size: 18px;
+      }
+
+      /* ================= COMMENT SECTION STYLES ================= */
+
+      .comment-section-card {
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        margin-top: 35px;
+        box-shadow: 0 10px 35px rgba(60, 43, 32, 0.08);
+      }
+
+      .comment-header-title {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #302017;
+      }
+
+      /* User Avatar Placeholder */
+      .avatar-placeholder {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-color: #eee5de;
+        color: #9b8779;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Input Box Style */
+      .comment-textarea {
+        width: 100%;
+        background: #f8f4f0;
+        border: 1px solid #e7ded7;
+        border-radius: 18px;
+        padding: 12px 18px;
+        font-size: 14px;
+        color: #3c2b20;
+        outline: none;
+        resize: none;
+        transition: all 0.2s ease;
+      }
+
+      .comment-textarea:focus {
+        background: #ffffff;
+        border-color: #402b1e;
+        box-shadow: 0 0 0 3px rgba(64, 43, 30, 0.1);
+      }
+
+      .comment-post-btn {
+        background: #402b1e;
+        color: white;
+        border: none;
+        padding: 9px 24px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .comment-post-btn:hover {
+        background: #5a4030;
+      }
+
+      /* FB Style Comment Bubble */
+      .comment-bubble {
+        background: #f8f4f0;
+        border-radius: 18px;
+        padding: 12px 18px;
+        display: inline-block;
+        max-width: 100%;
+      }
+
+      .comment-user-name {
+        font-weight: 700;
+        font-size: 14px;
+        color: #302017;
+        margin-bottom: 2px;
+      }
+
+      .comment-text {
+        color: #5f554f;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-line;
+      }
+
+      .comment-time {
+        font-size: 12px;
+        color: #9b8779;
+        margin-top: 4px;
+        margin-left: 12px;
+      }
+
+      /* ================= RESPONSIVE ================= */
+
+      @media (max-width: 900px) {
+        .nav-links {
+          display: none;
+        }
+
+        .book-detail-card {
+          flex-direction: column;
+          gap: 25px;
+        }
+
+        .book-image-section {
+          width: 100%;
+        }
+
+        .book-image-card {
+          height: 500px;
+        }
+
+        .book-info {
+          padding: 10px;
+        }
+
+        .book-info h1 {
+          font-size: 34px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .navbar {
+          padding: 0 20px;
+        }
+
+        .logo span {
+          font-size: 23px;
+        }
+
+        .nav-btn {
+          width: 45px;
+          height: 45px;
+        }
+
+        .detail-container {
+          margin-top: 25px;
+          padding: 0 15px;
+        }
+
+        .book-detail-card,
+        .comment-section-card {
+          padding: 20px;
+          border-radius: 20px;
+        }
+
+        .book-image-card {
+          height: 420px;
+        }
+
+        .book-info h1 {
+          font-size: 28px;
+        }
+
+        .stats {
+          flex-wrap: wrap;
+        }
+
+        .action-buttons {
+          flex-wrap: wrap;
+        }
+
+        .read-btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div style="display: flex">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/admin :: aside}"></div>
+
+      <!-- Main Content -->
+      <div class="main-content" style="flex: 1">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dcc8;
+            padding-bottom: 1rem;
+          "
+        >
+          <h1 class="cafe-header" style="margin: 0">Book Details</h1>
+          <div class=" ">
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-danger" type="submit">
+                Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+         <!-- ================= BOOK DETAIL ================= -->
+
+    <div class="detail-container">
+      <!-- Back -->
+
+      <!-- Back Button -->
+          <button type="button" onclick="history.back()" class="btn btn-sm btn-light border rounded-pill px-3 mb-3 fw-semibold">
+              <i class="fa-solid fa-arrow-left me-1"></i> Back
+          </button>
+
+      <div class="book-detail-card">
+        <!-- ================= IMAGE ================= -->
+
+        <div class="book-image-section">
+          <div class="book-image-card">
+            <img
+              th:src="${book.coverImageUrl != null ? book.coverImageUrl : 'https://via.placeholder.com/200x250'}"
+              alt=""
+            />
+          </div>
+        </div>
+
+        <!-- ================= INFORMATION ================= -->
+
+        <div class="book-info">
+          <!-- Premium Error Alert Message -->
+          <div
+            th:if="${param.error != null and param.error[0] == 'premium_required'}"
+            class="alert alert-warning alert-dismissible fade show my-3"
+            role="alert"
+          >
+            <strong>👑 Premium Required!</strong> ဒီစာအုပ်ကို ဖတ်ရှုရန်အတွက်
+            Premium Member ဝင်ထားရန် လိုအပ်ပါသည်။
+            <a th:href="@{/user/request-premium}" class="btn btn-sm btn-warning ms-2"
+              >Subscribe Now</a
+            >
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- Title -->
+
+          <h1 th:text="${book.title}">Book Title</h1>
+
+          <!-- Author -->
+
+          <p class="author">
+            <i class="fas fa-user-pen"></i>
+
+            <span class="fw-bold" th:text="${book.author}"> Author Name </span>
+          </p>
+
+          <!-- Genre -->
+
+          <span class="genre">
+            <i class="fas fa-tag"></i>
+
+            <span th:text="${book.genre}"> Romance </span>
+          </span>
+
+          <!-- Description -->
+
+          <h3 class="description-title">About this book</h3>
+
+          <p class="description" th:text="${book.description}">
+            This book contains an interesting story and useful information for
+            readers.
+          </p>
+
+          <!-- Stats -->
+
+          <div class="stats">
+            <div class="stat">
+              <i class="fas fa-eye"></i>
+
+              <span
+                th:text="${book.viewCount != null ? book.viewCount +' views' : 0}"
+              >
+                0
+              </span>
+            </div>
+
+            <div class="stat">
+              <i class="fas fa-download"></i>
+
+              <span
+                th:text="${book.downloadCount !=null ? book.downloadCount + ' downloads' : 0}"
+              >
+                0
+              </span>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+
+          <div class="action-buttons">
+            <!-- Read PDF -->
+
+            <a
+              th:href="@{/user/books/read/{id}(id=${book.id})}"
+              class="read-btn"
+            >
+              <i class="fas fa-book-open"></i>
+
+              Start Reading
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 💬 COMMENT SECTION START ================= -->
+
+<div class="comment-section-card">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <i class="far fa-comments fs-4" style="color: #402b1e;"></i>
+    <h4 class="comment-header-title mb-0">
+      Comments (<span th:text="${comments != null ? comments.size() : 0}">0</span>)
+    </h4>
+  </div>
+
+   
+
+  <hr style="border-color: #eee5de; margin-bottom: 30px;" />
+
+  <!-- 2. Comment List ပြသမည့် အပိုင်း -->
+  <div class="d-flex flex-column gap-4">
+    
+    <!-- Dynamic Comments Loop -->
+    <div th:each="comment : ${comments}" class="d-flex gap-3 align-items-start">
+      <!-- Commenter Profile Icon (အဝိုင်း) -->
+      <div class="avatar-placeholder">
+        <i class="fas fa-user"></i>
+      </div>
+
+      <div>
+        <!-- FB Style Bubble Container -->
+        <div class="comment-bubble">
+          <div class="comment-user-name" 
+               th:text="${comment.user != null ? (comment.user.name != null ? comment.user.name : comment.user.email) : 'User'}">
+            User Name
+          </div>
+          <div class="comment-text" th:text="${comment.content}">
+            Comment Content
+          </div>
+        </div>
+
+        <!-- Comment Date / Time -->
+        <div class="comment-time" 
+             th:text="${comment.createdAt != null ? #temporals.format(comment.createdAt, 'dd MMM yyyy, hh:mm a') : ''}">
+          28 Aug 2026, 07:30 PM
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment မရှိသေးပါက ပြသမည့် Message -->
+    <div th:if="${comments == null or #lists.isEmpty(comments)}" class="text-center py-4 text-muted">
+      <i class="far fa-comment-dots fs-3 d-block mb-2" style="color: #9b8779;"></i>
+      <small style="color: #9b8779;">No comments yet. Be the first to comment!</small>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= 💬 COMMENT SECTION END ================= -->
+        
+      </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+</html>

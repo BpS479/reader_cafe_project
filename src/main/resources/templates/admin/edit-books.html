@@ -1,0 +1,196 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add/Update Book - Reader Cafe Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome Icons (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div style="display: flex">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/admin :: aside}"></div>
+
+      <!-- Main Content -->
+      <div class="main-content" style="flex: 1">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dcc8;
+            padding-bottom: 1rem;
+          "
+        >
+          <h1 class="cafe-header" style="margin: 0">Edit Book</h1>
+          <div class=" ">
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-danger" type="submit">
+                Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+         <!-- top nav bar -->
+        <div th:replace="~{fragments/admin :: navigation-bar}"></div>
+
+        <div style="max-width: 700px">
+          <div class="cafe-card" style="padding: 2rem">
+            <form
+              th:action="@{/admin/books/update/{id}(id=${book.id})}"
+              th:object="${book}"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <div class="form-group">
+                <label class="form-label">Book Title *</label>
+                <input
+                  type="text"
+                  name="title"
+                  th:field="*{title}"
+                  class="form-control"
+                  placeholder="e.g. The Great Gatsby"
+                  required
+                />
+              </div>
+
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem"
+              >
+                <div class="form-group">
+                  <label class="form-label">Author *</label>
+                  <input
+                    type="text"
+                    name="author"
+                    th:field="*{author}"
+                    class="form-control"
+                    placeholder="e.g. F. Scott Fitzgerald"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Category *</label>
+                  <select
+                    th:field="*{genre}"
+                    name="genre"
+                    class="form-select"
+                    required
+                  >
+                    <option th:value="Romance">Romance</option>
+                    <option th:value="Fiction">Fiction</option>
+                    <option th:value="Non-Fiction">Non-Fiction</option>
+                    <option th:value="Science">Science</option>
+                    <option th:value="Sci-fi">Scifi</option>
+                    <option th:value="Mystery">Mystery</option>
+                    <option th:value="Technology">Technology</option>
+                    <option th:value="Programming">Programming</option>
+                    <option th:value="Biography">Biography</option>
+                    <option th:value="History">History</option>
+                    <option th:value="Business">Business</option>
+                    <option th:value="Economic">Economic</option>
+                    <option th:value="Beauty">Beauty</option>
+                    <option th:value="Health">Health</option>
+                    <option th:value="Travel">Travel</option>
+                    <option th:value="Nature">Nature</option>
+                    <option th:value="Translate">Translate</option>
+                    <option th:value="Self-improvement">Self-improvement</option>
+                    <option th:value="Literature">Literature</option>
+                  </select>
+                </div>
+              </div>
+
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem"
+              >
+                <div class="form-group">
+                  <label class="form-label">PDF file</label>
+                  <input
+                    type="file"
+                    name="pdfFile"
+                    accept="application/pdf"
+                    class="form-control"
+                    placeholder="e.g. 978-3-16-148410-0"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  placeholder="Enter book summary..."
+                  th:field="*{description}"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Book Cover Image</label>
+                <input
+                  type="file"
+                  name="imageFile"
+                  class="form-control"
+                  accept="image/*"
+                />
+                <small style="color: #999; display: block; margin-top: 0.5rem"
+                  >Recommended size: 400x600px. Max 2MB.</small
+                >
+              </div>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 1rem;
+                  margin-top: 2rem;
+                "
+              >
+                <a
+                  th:href="@{/admin/admin-books}"
+                  class="btn-cafe-outline"
+                  style="
+                    text-align: center;
+                    text-decoration: none;
+                    padding: 0.75rem;
+                  "
+                  >Cancel</a
+                >
+                <button type="submit" class="btn-cafe" style="padding: 0.75rem">
+                  Save Book
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+      function handleSubmit(event) {
+        event.preventDefault();
+        alert("Book saved successfully!");
+        window.location.href = "books.html";
+      }
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

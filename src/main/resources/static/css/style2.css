@@ -1,0 +1,75 @@
+:root {
+    --primary-color: #6F4E37; /* Coffee Brown */
+    --secondary-color: #A67B5B; /* Latte Brown */
+    --bg-color: #FDF5E6; /* Old Lace/Cream */
+    --accent-color: #556B2F; /* Dark Olive Green */
+    --text-color: #3E2723; /* Darker Brown */
+    --light-text: #FFFFFF;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cafe-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-color: #FFFFFF;
+}
+
+.btn-cafe {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn-cafe:hover {
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.btn-cafe-outline {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.btn-cafe-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.navbar-cafe {
+    background-color: var(--primary-color);
+}
+
+.sidebar-cafe {
+    background-color: #3E2723;
+    color: var(--light-text);
+    min-height: 100vh;
+}
+
+.sidebar-cafe .nav-link {
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.sidebar-cafe .nav-link.active {
+    background-color: var(--secondary-color);
+    color: #FFFFFF;
+}
+
+.sidebar-cafe .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.cafe-header {
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    color: var(--primary-color);
+}

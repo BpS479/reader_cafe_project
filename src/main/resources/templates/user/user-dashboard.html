@@ -1,0 +1,1578 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reader Cafe · E-Library</title>
+    <!-- Google Fonts (English only) & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- SweetAlert2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-cream: #fcf9f2;
+        --deep-charcoal: #1e1a1a;
+        --soft-coral: #ed8171;
+        --warm-mustard: #e3b15a;
+        --sage-green: #8db5a4;
+        --dusty-rose: #d6a2a8;
+        --golden: #d4a373;
+        --deep-teal: #2f4f4f;
+        --light-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+        --transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-cream);
+        color: var(--deep-charcoal);
+        overflow-x: hidden;
+        line-height: 1.5;
+      }
+
+      /* ===== Scrollbar ===== */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f0ebe3;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--soft-coral);
+        border-radius: 20px;
+      }
+
+      /* ===== NAVBAR ===== */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 18px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 999;
+        transition: var(--transition);
+        background: transparent;
+      }
+
+      .navbar.scrolled {
+        background: rgba(246, 243, 236, 0.8);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 2px 24px rgba(0, 0, 0, 0.04);
+        padding: 12px 48px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--deep-charcoal);
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+
+      .logo i {
+        color: var(--soft-coral);
+        font-size: 30px;
+        animation: floatIcon 3.6s ease-in-out infinite;
+      }
+
+      @keyframes floatIcon {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-8px) rotate(2deg);
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--deep-charcoal);
+        font-weight: 500;
+        font-size: 15px;
+        opacity: 0.7;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 0;
+        height: 2.5px;
+        background: var(--soft-coral);
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .nav-actions i {
+        font-size: 20px;
+        color: var(--deep-charcoal);
+        opacity: 0.6;
+        transition: var(--transition);
+        cursor: pointer;
+      }
+
+      .nav-actions i:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+        transform: scale(1.12) rotate(2deg);
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(
+          145deg,
+          var(--soft-coral),
+          var(--warm-mustard)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(242, 139, 122, 0.3);
+      }
+
+      .avatar:hover {
+        transform: scale(1.08) rotate(-3deg);
+        box-shadow: 0 8px 24px rgba(242, 139, 122, 0.4);
+      }
+
+      /* ===== HERO ===== */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 120px 60px 80px;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(
+          circle at 80% 20%,
+          #faf0e6 0%,
+          #f5ede4 100%
+        );
+      }
+
+      .hero-content {
+        max-width: 620px;
+        z-index: 5;
+        position: relative;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--deep-teal);
+        color: white;
+        padding: 8px 22px;
+        border-radius: 60px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 16px rgba(47, 79, 79, 0.15);
+        animation: fadeInUp 0.9s ease forwards;
+      }
+
+      .hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 72px;
+        line-height: 1.05;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+        animation: fadeInUp 0.9s ease 0.08s forwards;
+        opacity: 0;
+      }
+
+      .hero h1 span {
+        color: var(--soft-coral);
+        position: relative;
+        display: inline-block;
+      }
+
+      .hero h1 span::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: rgba(242, 139, 122, 0.2);
+        border-radius: 20px;
+        z-index: -1;
+      }
+
+      .hero p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #4a3f3a;
+        margin-bottom: 36px;
+        max-width: 460px;
+        opacity: 0;
+        animation: fadeInUp 0.9s ease 0.15s forwards;
+      }
+
+      .hero-search {
+        display: flex;
+        align-items: center;
+        background: white;
+        border-radius: 80px;
+        padding: 6px 6px 6px 28px;
+        box-shadow: var(--light-shadow);
+        max-width: 520px;
+        border: 2px solid transparent;
+        transition: var(--transition);
+        opacity: 0;
+        animation: fadeInUp 0.9s ease 0.25s forwards;
+      }
+
+      .hero-search:focus-within {
+        border-color: var(--soft-coral);
+        box-shadow: 0 20px 48px rgba(242, 139, 122, 0.15);
+        transform: scale(1.01);
+      }
+
+      .hero-search input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 16px 0;
+        font-size: 16px;
+        background: transparent;
+        color: var(--deep-charcoal);
+        font-family: "Inter", sans-serif;
+      }
+
+      .hero-search input::placeholder {
+        color: #b8aaa0;
+        font-weight: 300;
+      }
+
+      .hero-search button {
+        background: var(--soft-coral);
+        border: none;
+        color: white;
+        padding: 14px 34px;
+        border-radius: 80px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Inter", sans-serif;
+        box-shadow: 0 4px 14px rgba(242, 139, 122, 0.3);
+      }
+
+      .hero-search button:hover {
+        background: var(--deep-charcoal);
+        transform: scale(1.03);
+        box-shadow: 0 8px 24px rgba(30, 26, 26, 0.2);
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 52px;
+        margin-top: 52px;
+        opacity: 0;
+        animation: fadeInUp 0.9s ease 0.35s forwards;
+      }
+
+      .stat-item h3 {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--deep-charcoal);
+        letter-spacing: -0.5px;
+      }
+
+      .stat-item p {
+        font-size: 14px;
+        color: #6f6056;
+        font-weight: 400;
+        margin-top: 2px;
+      }
+
+      /* ===== FLOATING ICONS — Vivid, opaque, colorful ===== */
+      .floating-icons {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .float-icon {
+        position: absolute;
+        font-size: 56px;
+        opacity: 1;
+        animation: floatVivid 14s infinite alternate ease-in-out;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.06));
+        transition: transform 0.2s;
+      }
+
+      /* each icon with distinct color & motion */
+      .float-icon:nth-child(1) {
+        top: 12%;
+        left: 6%;
+        color: #e3b15a;
+        font-size: 72px;
+        animation-duration: 16s;
+      }
+
+      .float-icon:nth-child(2) {
+        top: 22%;
+        right: 8%;
+        color: #f28b7a;
+        font-size: 84px;
+        animation-duration: 18s;
+        animation-delay: -2s;
+      }
+
+      .float-icon:nth-child(3) {
+        bottom: 25%;
+        left: 10%;
+        color: #8db5a4;
+        font-size: 68px;
+        animation-duration: 15s;
+        animation-delay: -4s;
+      }
+
+      .float-icon:nth-child(4) {
+        bottom: 35%;
+        right: 15%;
+        color: #d6a2a8;
+        font-size: 90px;
+        animation-duration: 20s;
+        animation-delay: -1s;
+      }
+
+      .float-icon:nth-child(5) {
+        top: 50%;
+        left: 4%;
+        color: #d4a373;
+        font-size: 60px;
+        animation-duration: 17s;
+        animation-delay: -5s;
+      }
+
+      .float-icon:nth-child(6) {
+        top: 8%;
+        left: 45%;
+        color: #b5a6d6;
+        font-size: 48px;
+        animation-duration: 13s;
+        animation-delay: -3s;
+      }
+
+      .float-icon:nth-child(7) {
+        bottom: 12%;
+        right: 30%;
+        color: #f5b7a1;
+        font-size: 64px;
+        animation-duration: 19s;
+        animation-delay: -6s;
+      }
+
+      .float-icon:nth-child(8) {
+        top: 70%;
+        right: 6%;
+        color: #a8c4c0;
+        font-size: 52px;
+        animation-duration: 14s;
+        animation-delay: -2s;
+      }
+
+      @keyframes floatVivid {
+        0% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+
+        25% {
+          transform: translate(25px, -30px) rotate(6deg) scale(1.08);
+        }
+
+        50% {
+          transform: translate(-15px, 20px) rotate(-4deg) scale(0.95);
+        }
+
+        75% {
+          transform: translate(30px, 15px) rotate(8deg) scale(1.05);
+        }
+
+        100% {
+          transform: translate(-10px, -20px) rotate(-2deg) scale(0.98);
+        }
+      }
+
+      /* ===== BOOK STACK (hero) ===== */
+      .hero-books {
+        position: absolute;
+        right: 8%;
+        bottom: 15%;
+        display: flex;
+        gap: 24px;
+        z-index: 2;
+        opacity: 0;
+        animation: fadeInUp 1s ease 0.5s forwards;
+      }
+
+      .hero-books .book {
+        width: 90px;
+        height: 130px;
+        border-radius: 6px 16px 16px 6px;
+        box-shadow: var(--card-shadow);
+        transform: rotate(-8deg);
+        transition: var(--transition);
+      }
+
+      .hero-books .book:nth-child(1) {
+        background: linear-gradient(145deg, #e3b15a, #c9943f);
+        transform: rotate(-6deg) translateY(-10px);
+      }
+
+      .hero-books .book:nth-child(2) {
+        background: linear-gradient(145deg, #8db5a4, #6a8f7c);
+        transform: rotate(4deg) translateY(-30px);
+        height: 150px;
+      }
+
+      .hero-books .book:nth-child(3) {
+        background: linear-gradient(145deg, #d6a2a8, #b88288);
+        transform: rotate(-10deg) translateY(-5px);
+        height: 110px;
+      }
+
+      /* ===== SECTIONS GENERAL ===== */
+      section {
+        padding: 80px 60px;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .section-header h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 44px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .section-header p {
+        color: #6f6056;
+        font-size: 17px;
+        margin-top: 6px;
+      }
+
+      .accent-line {
+        width: 64px;
+        height: 4px;
+        background: var(--soft-coral);
+        margin: 14px auto 0;
+        border-radius: 10px;
+      }
+
+      /* ===== CATEGORIES ===== */
+      .categories {
+        background: rgb(240, 240, 240);
+      }
+
+      .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 28px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .category-card {
+        background: var(--bg-cream);
+        padding: 32px 20px;
+        border-radius: 24px;
+        text-align: center;
+        transition: var(--transition);
+        cursor: default;
+        border: 1px solid rgba(242, 139, 122, 0.08);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.02);
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .category-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .category-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 24px 50px rgba(242, 139, 122, 0.12);
+        border-color: var(--soft-coral);
+        background: white;
+      }
+
+      .category-card i {
+        font-size: 40px;
+        color: var(--soft-coral);
+        margin-bottom: 14px;
+        display: inline-block;
+        transition: var(--transition);
+      }
+
+      .category-card:hover i {
+        transform: scale(1.12) rotate(4deg);
+        color: var(--warm-mustard);
+      }
+
+      .category-card h4 {
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.2px;
+      }
+
+      .category-card p {
+        font-size: 14px;
+        color: #7a6a5e;
+        margin-top: 4px;
+      }
+
+      /* ===== FEATURED BOOKS ===== */
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 34px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .book-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04);
+        transition: var(--transition);
+        cursor: default;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .book-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .book-card:hover {
+        transform: translateY(-14px);
+        box-shadow: 0 32px 64px rgba(30, 26, 26, 0.08);
+      }
+
+      .book-card:hover .book-img {
+        transform: scale(1.04);
+      }
+
+      .book-img {
+        height: 260px;
+        background: var(--soft-coral);
+        transition: var(--transition);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+
+      .book-img .badge {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: var(--deep-teal);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 5px 14px;
+        border-radius: 40px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .book-info {
+        padding: 20px 20px 26px;
+      }
+
+      .book-info h4 {
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: -0.2px;
+      }
+
+      .book-info .author {
+        font-size: 14px;
+        color: #7a6a5e;
+        font-weight: 400;
+        margin-top: 2px;
+      }
+
+      .book-info .rating {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #f5b342;
+        font-size: 15px;
+      }
+
+      .book-info .rating span {
+        color: #7a6a5e;
+        margin-left: 4px;
+        font-weight: 400;
+      }
+
+      /* ===== NEWSLETTER ===== */
+      .newsletter {
+        background: var(--deep-charcoal);
+        color: white;
+        text-align: center;
+        padding: 90px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .newsletter::before {
+        content: "✦";
+        position: absolute;
+        font-size: 320px;
+        right: -60px;
+        bottom: -120px;
+        opacity: 0.04;
+        transform: rotate(12deg);
+        color: var(--soft-coral);
+      }
+
+      .newsletter h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 42px;
+        font-weight: 800;
+      }
+
+      .newsletter p {
+        opacity: 0.7;
+        margin-bottom: 32px;
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 16px;
+      }
+
+      .newsletter-form {
+        display: flex;
+        max-width: 480px;
+        margin: 0 auto;
+        gap: 12px;
+      }
+
+      .newsletter-form input {
+        flex: 1;
+        padding: 16px 24px;
+        border-radius: 80px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        outline: none;
+        font-size: 15px;
+        background: rgba(255, 255, 255, 0.06);
+        color: white;
+        transition: var(--transition);
+        font-family: "Inter", sans-serif;
+      }
+
+      .newsletter-form input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .newsletter-form input:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--soft-coral);
+      }
+
+      .newsletter-form button {
+        padding: 16px 34px;
+        border-radius: 80px;
+        border: none;
+        background: var(--soft-coral);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 15px;
+        font-family: "Inter", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 16px rgba(242, 139, 122, 0.25);
+      }
+
+      .newsletter-form button:hover {
+        background: var(--warm-mustard);
+        transform: scale(1.03);
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        background: #141111;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 40px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+
+      .footer .logo {
+        color: white;
+      }
+
+      .footer .logo i {
+        color: var(--soft-coral);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 28px;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 14px;
+      }
+
+      .footer-links a:hover {
+        color: var(--soft-coral);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 18px;
+      }
+
+      .social-icons a {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 20px;
+        transition: var(--transition);
+      }
+
+      .social-icons a:hover {
+        color: var(--soft-coral);
+        transform: translateY(-4px);
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 992px) {
+        .hero h1 {
+          font-size: 52px;
+        }
+
+        .floating-icons {
+          display: none;
+        }
+
+        .hero-books {
+          display: none;
+        }
+
+        .navbar {
+          padding: 14px 24px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        section {
+          padding: 10px 10px;
+        }
+        /* section {
+                padding: 60px 24px;
+            } */
+
+        .hero {
+          padding: 10px 10px 10px;
+        }
+        /* .hero {
+                padding: 120px 24px 60px;
+            } */
+
+        .hero-stats {
+          gap: 28px;
+          flex-wrap: wrap;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero h1 {
+          font-size: 38px;
+        }
+        .hero {
+          padding: 10px 10px 10px;
+        }
+        section {
+          padding: 10px 10px;
+        }
+
+        .hero-search {
+          flex-direction: column;
+          background: transparent;
+          padding: 0;
+          box-shadow: none;
+          gap: 12px;
+        }
+
+        .hero-search input {
+          background: white;
+          padding: 16px 24px;
+          border-radius: 80px;
+          width: 100%;
+        }
+
+        .hero-search button {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .newsletter-form {
+          flex-direction: column;
+        }
+
+        .footer {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .section-header h2 {
+          font-size: 32px;
+        }
+      }
+
+      /* Trigger Button */
+      .btn-open-sidebar {
+        background: #1f140e;
+        border: none;
+        padding: 14px 40px;
+        border-radius: 60px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-open-sidebar:hover {
+        background: #c48b59;
+        transform: scale(1.03);
+        box-shadow: 0 12px 30px rgba(196, 139, 89, 0.35);
+      }
+
+      /* Sidebar Custom Colors (Bootstrap overrides) */
+      .offcanvas#readerSidebar {
+        background: #1f140e;
+        color: #e8ddd0;
+        width: 280px;
+        border-right: 2px solid rgba(196, 139, 89, 0.25);
+      }
+
+      .offcanvas#readerSidebar .offcanvas-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .offcanvas#readerSidebar .brand-text {
+        font-family: "Playfair Display", serif;
+        font-weight: 800;
+        font-size: 24px;
+        color: #ffffff;
+      }
+
+      .offcanvas#readerSidebar .brand-text span {
+        color: #c48b59;
+      }
+
+      .offcanvas#readerSidebar .brand-icon {
+        font-size: 28px;
+        color: #c48b59;
+        margin-right: 14px;
+      }
+
+      /* Nav Links */
+      .offcanvas#readerSidebar .nav-link {
+        color: rgba(255, 255, 255, 0.65);
+        border-radius: 10px;
+        padding: 13px 20px;
+        transition: all 0.25s ease;
+      }
+
+      .offcanvas#readerSidebar .nav-link:hover {
+        background: rgba(196, 139, 89, 0.15);
+        color: #ffffff;
+        transform: translateX(5px);
+      }
+
+      .offcanvas#readerSidebar .nav-link.active {
+        background: rgba(196, 139, 89, 0.2);
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #c48b59;
+      }
+
+      .offcanvas#readerSidebar .nav-link i {
+        width: 22px;
+        color: #c48b59;
+      }
+
+      /* Logout link */
+      .offcanvas#readerSidebar .nav-link.logout {
+        color: #e07c7c;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 12px;
+        padding-top: 20px;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout i {
+        color: #e07c7c;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout:hover {
+        background: rgba(224, 124, 124, 0.12);
+        color: #ff9a9a;
+      }
+
+      /* Close button */
+      /* .offcanvas#readerSidebar .btn-close-white {
+        filter: brightness(0.8);
+        opacity: 0.7;
+      }
+
+      .offcanvas#readerSidebar .btn-close-white:hover {
+        filter: brightness(1);
+        opacity: 1;
+      } */
+
+      /* Trigger Card */
+      .trigger-card {
+        background: white;
+        padding: 50px 60px;
+        border-radius: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+        text-align: center;
+        max-width: 500px;
+      }
+
+      .trigger-card .trigger-icon {
+        font-size: 48px;
+        color: #c48b59;
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      .trigger-card h3 {
+        font-family: "Playfair Display", serif;
+        color: #1f140e;
+      }
+
+      .trigger-card .trigger-text {
+        color: #7a6a5a;
+        margin: 8px 0 28px;
+      }
+      .book-cover {
+        height: 250px; /* မိမိစိတ်ကြိုက် အနိမ့်အမြင့် ညှိနိုင်ပါသည် */
+        object-fit: cover; /* ပုံမပြဲဘဲ ကွက်တိဝင်စေရန် */
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+      <a href="#" class="logo">
+        <i class="fas fa-graduation-cap"></i>
+        Reader Cafe
+      </a>
+      <ul class="nav-links">
+        <li><a th:href="@{/user/user-dashboard}">Home</a></li>
+        <li><a th:href="@{/user/home}">Books</a></li>
+        <li><a th:href="@{/user/favorites}">Favorites</a></li>
+        <li><a th:href="@{/user/feed}">Social</a></li>
+       <li><a th:href="@{/user/profile}">Profile</a></li>
+      </ul>
+
+      <button
+        class="btn-open-sidebar"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#readerSidebar"
+      >
+        <i class="fas fa-bars me-2"></i> Open Menu
+      </button>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-content">
+        <!-- <span class="hero-badge"><i class="fas fa-book-open"></i> Today's Pick</span> -->
+        <h1>Rediscover the <br /><span>Joy of Reading</span></h1>
+        <p>
+          Welcome to Reader Cafe — your cozy corner for thousands of books, warm
+          coffee, and a peaceful reading atmosphere.
+        </p>
+
+        <form th:action="@{/user/home}" method="get" class="hero-search">
+          <input
+            name="keyword"
+            th:value="${keyword}"
+            type="text"
+            placeholder="Search with Title, Genre, Author"
+          />
+          <button type="submit">
+            <i class="fas fa-arrow-right"></i> Explore
+          </button>
+        </form>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h3>10K+</h3>
+            <p>Books</p>
+          </div>
+          <div class="stat-item">
+            <h3>5K+</h3>
+            <p>Readers</p>
+          </div>
+          <div class="stat-item">
+            <h3>1M+</h3>
+            <p>Pages</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Icons — vivid, colorful, opaque -->
+      <div class="floating-icons">
+        <i class="fas fa-book float-icon"></i>
+        <i class="fas fa-mug-hot float-icon"></i>
+        <i class="fas fa-pen-fancy float-icon"></i>
+        <i class="fas fa-feather float-icon"></i>
+        <i class="fas fa-crown float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-palette float-icon"></i>
+        <i class="fas fa-star float-icon"></i>
+      </div>
+
+      <div class="hero-books">
+        <div class="book"></div>
+        <div class="book"></div>
+        <div class="book"></div>
+      </div>
+    </section>
+
+    <!-- ===== CATEGORIES ===== -->
+    <section class="categories">
+      <div class="section-header">
+        <h2>Categories</h2>
+        <p>Choose your favorite genre</p>
+        <div class="accent-line"></div>
+      </div>
+      <div class="category-grid">
+        <div
+          onclick="
+            searchCategory('Fiction');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-feather"></i>
+          <h4>Fiction</h4>
+          <p>Imagination</p>
+        </div>
+
+        <div
+          onclick="
+            searchCategory('Science');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-microscope"></i>
+          <h4>Science</h4>
+          <p>Discovery</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Business');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-chart-line"></i>
+          <h4>Business</h4>
+          <p>Growth</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Travel');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-plane"></i>
+          <h4>Travel</h4>
+          <p>Adventure</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Programming');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-code"></i>
+          <h4>Programming</h4>
+          <p>Code Master</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Romance');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-heart"></i>
+          <h4>Romance</h4>
+          <p>Love</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Health');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-plus"></i>
+          <h4>Health</h4>
+          <p>Health</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('History');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-book"></i>
+          <h4>History</h4>
+          <p>Discover</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Technology');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-computer"></i>
+          <h4>Technology</h4>
+          <p></p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Biography');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-pencil"></i>
+          <h4>Biography</h4>
+          <p></p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Economic');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-dollar"></i>
+          <h4>Economic</h4>
+          <p>economy</p>
+        </div>
+        <div
+          onclick="
+            searchCategory('Non-fiction');
+            return false;
+          "
+          class="category-card animate-on-scroll"
+        >
+          <i class="fas fa-feather"></i>
+          <h4>Non-fiction</h4>
+          <p>true-story</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+        <div class="section-header"><h2><span style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color: red;">Top 3</span> Trending Books</h2></div>
+        
+      <div class="row g-4">
+
+        <div class="col-12 col-sm-6 col-md-4 col-xl-4 mb-4 p-3" th:each="book : ${books}">
+          <div class="card h-100 shadow-sm border-0">
+            <img
+              th:src="${book.coverImageUrl != null ? book.coverImageUrl : 'https://via.placeholder.com/200x250'}"
+              class="card-img-top book-cover"
+              alt="Book Cover"
+            />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${book.title}">Book Title</h5>
+              
+              <p class="card-text text-muted" th:text="${book.author}">Author Name</p>
+              <div class="justify-content-end row">
+                <span class="col"><i class="fas fa-download"></i> <span th:text="${book.viewCount != null ? book.viewCount +' views' : 0}">433</span></span> 
+                <span class="col"><i class="fas fa-eye"></i> <span th:text="${book.downloadCount  !=null ? book.downloadCount + '  downloads' : 0}">122</span></span>
+              </div>
+            </div>
+
+              <!-- Buttons -->
+              <div class="mt-auto mb-2 d-flex gap-2">
+                 
+                <a
+                  th:href="@{/user/books/detail/{id}(id=${book.id})}"
+                   
+                  class="btn btn-primary  flex-fill rounded-pill"
+                >
+                  Read
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+         
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <a href="#" class="logo">
+        <i class="fas fa-mug-saucer"></i>
+        Reader Cafe
+      </a>
+      <div class="footer-links">
+        <a href="#">Services</a>
+        <a href="#">Privacy</a>
+        <a href="#">Help</a>
+      </div>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+      </div>
+    </footer>
+
+    <!-- OFFCANVAS -->
+    <!-- ===== OFFCANVAS SIDEBAR ===== -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="readerSidebar"
+      aria-labelledby="readerSidebarLabel"
+    >
+      <!-- Header -->
+      <div class="offcanvas-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-mug-saucer brand-icon"></i>
+          <span class="brand-text">Reader <span class="text-warning">Cafe</span></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <!-- Body -->
+      <div class="offcanvas-body">
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item">
+            <a th:href="@{/user/user-dashboard}" class="nav-link">
+              <i class="fas fa-house text-warning me-3"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/home}" class="nav-link">
+              <i class="fas fa-book text-warning me-3"></i> Book Catalog
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/favorites}" class="nav-link">
+              <i class="fas fa-heart text-warning me-3"></i> Favorites
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/profile}" class="nav-link">
+              <i class="fas fa-user-astronaut text-warning me-3"></i> Profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/feed}" class="nav-link">
+              <i class="fas fa-user-friends text-warning me-3"></i> Reade-Community
+            </a>
+          </li>
+          <!-- <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock-rotate-left me-3"></i> History
+                    </a>
+                </li> -->
+
+          <!-- 👑 Premium User မဟုတ်သေးပါက ပြသမည့် Buy Premium Button -->
+          <!-- <li th:unless="${user?.isPremium}" class="nav-item px-3 py-1">
+            <a
+              th:href="@{/user/request-premium}"
+              class="nav-link btn btn-outline-warning text-warning d-flex align-items-center justify-content-center gap-2 py-2 px-3 rounded-3 fw-semibold border-warning-subtle shadow-sm transition-all"
+            >
+              <i class="fas fa-crown text-warning"></i>
+              <span>Upgrade to Premium</span>
+            </a>
+          </li> -->
+           
+
+          <li th:unless="${user?.isPremium}" class="nav-item">
+            <a th:href="@{/user/request-premium}" class="nav-link">
+               <i class="fas fa-crown text-warning me-3"></i> Subscribe Premium 
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/messages/user-messages}" class="nav-link">
+               <i class="fas fa-envelope text-warning me-3"></i>  Message
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="nav-link text-danger fw-bold">
+                <i class="fas fa-right-from-bracket me-3 text-danger"></i> Logout
+              </button>
+            </form>
+          </li>
+
+          <!-- 🌟 Premium User ဖြစ်နေလျှင် ပြသမည့် Badge Box -->
+          <li th:if="${user?.isPremium}" class="nav-item px-3 py-2">
+            <div
+              class="p-3 rounded-3 bg-dark bg-gradient border border-warning border-opacity-25 shadow-sm"
+            >
+              <div class="d-flex align-items-center mb-1">
+                <span
+                  class="badge bg-warning text-dark me-2 rounded-pill px-2 py-1"
+                >
+                  <i class="fas fa-crown me-1"></i> PRO
+                </span>
+                <span class="fw-semibold text-light small">Premium Active</span>
+              </div>
+              <div class="text-white-50 extra-small" style="font-size: 0.78rem">
+                Expires:
+                <span
+                  th:text="${user.premiumExpiryDate}"
+                  class="text-warning fw-medium"
+                  >2026-12-31</span
+                >
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Footer -->
+        <div
+          class="mt-5 pt-3 text-center"
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.812);
+            font-size: 12px;
+          "
+        >
+          <i class="fas fa-mug-saucer me-1"></i> version 1.0 · Reader Cafe
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toast Message Script -->
+    <script th:inline="javascript">
+      let successToast = /*[[${successToast}]]*/ null;
+
+      if (successToast) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: successToast,
+        });
+      }
+    </script>
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+      // 1. Navbar scroll effect
+      const navbar = document.getElementById("navbar");
+      window.addEventListener("scroll", () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 40);
+      });
+
+      // 2. Intersection Observer for scroll animations
+      const animateElements = document.querySelectorAll(".animate-on-scroll");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                entry.target.classList.add("visible");
+              }, index * 70);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -20px 0px" },
+      );
+
+      animateElements.forEach((el) => observer.observe(el));
+
+      // 4. Newsletter subscribe demo
+      document
+        .querySelector(".newsletter-form button")
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          const input = document.querySelector(".newsletter-form input");
+          if (input.value.trim() === "" || !input.value.includes("@")) {
+            alert("Please enter a valid email address.");
+            input.style.borderColor = "#F28B7A";
+            setTimeout(
+              () => (input.style.borderColor = "rgba(255,255,255,0.1)"),
+              1000,
+            );
+          } else {
+            alert("Subscribed successfully! Thank you.");
+            input.value = "";
+          }
+        });
+
+      console.log("☕ Reader Cafe · vivid floating edition loaded");
+      //canvas
+      document.addEventListener("DOMContentLoaded", function () {
+        const offcanvasEl = document.getElementById("readerSidebar");
+        const links = offcanvasEl.querySelectorAll(".nav-link");
+        const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+
+        links.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (offcanvas) offcanvas.hide();
+          });
+        });
+      });
+      //search keyword for category card
+      function searchCategory(categoryName) {
+        //Category တစ်ခုတည်း ပို့မည်
+        let finalKeyword = categoryName;
+
+        //မင်းရဲ့ မူလ Controller `/user/home?keyword=...` ဆီ တိုက်ရိုက် သွားမည်
+        window.location.href =
+          "/user/home?keyword=" + encodeURIComponent(finalKeyword);
+      }
+    </script>
+  </body>
+</html>

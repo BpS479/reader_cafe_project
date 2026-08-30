@@ -1,0 +1,1654 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Catalog</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome 6 (Free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <!-- Google Font (Poppins) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ===== BASE ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f8f4f0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ===== SCROLLBAR ===== */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1e9e3;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--soft-coral);
+        border-radius: 20px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f0ebe3;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #b09584;
+      }
+      :root {
+        --bg-cream: #fcf9f2;
+        --deep-charcoal: #1e1a1a;
+        --soft-coral: #ed8171;
+        --warm-mustard: #e3b15a;
+        --sage-green: #8db5a4;
+        --dusty-rose: #d6a2a8;
+        --golden: #d4a373;
+        --deep-teal: #2f4f4f;
+        --light-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+        --transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      /* ===== NAVBAR ===== */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 18px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 999;
+        transition: var(--transition);
+        background: transparent;
+        margin-bottom: 10px;
+      }
+
+      .navbar.scrolled {
+        background: rgba(252, 249, 242, 0.8);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 2px 24px rgba(0, 0, 0, 0.04);
+        padding: 12px 48px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--deep-charcoal);
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+
+      .logo i {
+        color: var(--soft-coral);
+        font-size: 30px;
+        animation: floatIcon 3.6s ease-in-out infinite;
+      }
+      @keyframes floatIcon {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-8px) rotate(2deg);
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--deep-charcoal);
+        font-weight: 500;
+        font-size: 15px;
+        opacity: 0.7;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 0;
+        height: 2.5px;
+        background: var(--soft-coral);
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .nav-actions i {
+        font-size: 20px;
+        color: var(--deep-charcoal);
+        opacity: 0.6;
+        transition: var(--transition);
+        cursor: pointer;
+      }
+
+      .nav-actions i:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+        transform: scale(1.12) rotate(2deg);
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(
+          145deg,
+          var(--soft-coral),
+          var(--warm-mustard)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(242, 139, 122, 0.3);
+      }
+
+      .avatar:hover {
+        transform: scale(1.08) rotate(-3deg);
+        box-shadow: 0 8px 24px rgba(242, 139, 122, 0.4);
+      }
+
+      /* ===== SIDEBAR ===== */
+      .sidebar-wrapper {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 28px 20px;
+        box-shadow: 0 8px 32px rgba(61, 44, 31, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+        transition: 0.3s;
+        border: 1px solid rgba(201, 179, 165, 0.25);
+      }
+      .sidebar-wrapper .sidebar-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #3d2c1f;
+        letter-spacing: 0.5px;
+        padding-bottom: 14px;
+        border-bottom: 2px solid #f0e4db;
+        margin-bottom: 18px;
+      }
+      .sidebar-wrapper .sidebar-title i {
+        color: #7bd58a;
+        margin-right: 10px;
+      }
+      .sidebar-wrapper .genre-chip {
+        display: inline-block;
+        padding: 8px 18px;
+        margin: 5px 6px 5px 0;
+        background: #f5ede8;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #4d3728;
+        cursor: pointer;
+        transition: 0.25s;
+        border: 1px solid transparent;
+        text-decoration: none;
+      }
+      .sidebar-wrapper .genre-chip:hover,
+      .sidebar-wrapper .genre-chip.active {
+        background: #3d2c1f;
+        color: #fff;
+        border-color: #3d2c1f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(61, 44, 31, 0.2);
+      }
+      .sidebar-wrapper .genre-chip i {
+        margin-right: 6px;
+      }
+
+      .sidebar-stats {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid #f0e4db;
+      }
+      .sidebar-stats .stat-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.9rem;
+        color: #5a4a3d;
+      }
+      .sidebar-stats .stat-item i {
+        color: #b09584;
+        width: 24px;
+      }
+      .sidebar-stats .stat-item .badge-stat {
+        background: #f0e4db;
+        color: #3d2c1f;
+        font-weight: 600;
+        padding: 2px 14px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+      }
+
+      /* ===== SEARCH BAR ===== */
+      .search-wrap form {
+        background: #ffffff;
+        border-radius: 60px;
+        padding: 4px 8px 4px 22px;
+        box-shadow: 0 4px 16px rgba(61, 44, 31, 0.06);
+        border: 1px solid rgba(201, 179, 165, 0.3);
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+      }
+      .search-wrap:focus-within {
+        border-color: #b09584;
+        box-shadow: 0 4px 24px rgba(61, 44, 31, 0.12);
+      }
+      .search-wrap input {
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 10px 0;
+        font-size: 0.95rem;
+        flex: 1;
+        color: #3d2c1f;
+        font-weight: 400;
+      }
+      .search-wrap input::placeholder {
+        color: #b8a79b;
+        font-weight: 300;
+      }
+      .search-wrap button {
+        background: #3d2c1f;
+        border: none;
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 40px;
+        font-weight: 500;
+        transition: 0.3s;
+        font-size: 0.9rem;
+      }
+      .search-wrap button:hover {
+        background: #5a3f2e;
+        transform: scale(1.02);
+      }
+      .search-wrap button i {
+        margin-right: 6px;
+      }
+
+      /* ===== PAGE HEADER ===== */
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      .page-header h2 {
+        font-weight: 700;
+        color: #3d2c1f;
+        font-size: 1.7rem;
+        margin: 0;
+      }
+      .page-header h2 i {
+        color: #b09584;
+        margin-right: 10px;
+      }
+      .page-header .book-count {
+        background: #dcf0db;
+        padding: 6px 20px;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #3d2c1f;
+      }
+
+      /* ===== BOOK CARDS ===== */
+      .book-card {
+        background: #ffffff;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 6px 24px rgba(61, 44, 31, 0.06);
+        border: 1px solid rgba(201, 179, 165, 0.15);
+        position: relative;
+      }
+      .book-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 18px 48px rgba(61, 44, 31, 0.12);
+        border-color: rgba(201, 179, 165, 0.3);
+      }
+
+      .book-card .card-img-top {
+        height: 220px;
+        object-fit: cover;
+        background: #f5ede8;
+        transition: 0.4s;
+      }
+      .book-card:hover .card-img-top {
+        transform: scale(1.02);
+      }
+
+      .book-card .card-body {
+        padding: 18px 18px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .book-card .card-title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #3d2c1f;
+        margin-bottom: 4px;
+        display: -webkit-box;
+
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .book-card .card-author {
+        font-size: 0.9rem;
+        color: #7a6759;
+        font-weight: 400;
+        margin-bottom: 6px;
+      }
+      .book-card .card-author i {
+        color: #b09584;
+        margin-right: 4px;
+      }
+      .book-card .card-genre {
+        display: inline-block;
+        background: #b5c4f5;
+        padding: 2px 16px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #5a3f2e;
+        margin-bottom: 14px;
+        align-self: flex-start;
+        letter-spacing: 0.3px;
+      }
+      .book-card .card-genre-success {
+        display: inline-block;
+        background: #b7f5b5;
+        padding: 2px 16px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #5a3f2e;
+        margin-bottom: 14px;
+        align-self: flex-start;
+        letter-spacing: 0.3px;
+      }
+
+      .book-card .card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        gap: 8px;
+      }
+
+      .book-card .btn-fav {
+        background: transparent;
+        border: none;
+        font-size: 1.6rem;
+        color: #d4c0b4;
+        cursor: pointer;
+        transition: 0.25s;
+        padding: 0 4px;
+        line-height: 1;
+      }
+      .book-card .btn-fav:hover {
+        transform: scale(1.15);
+      }
+      .book-card .btn-fav.active {
+        color: #e74c5e;
+      }
+      .book-card .btn-fav.active i {
+        animation: heartPop 0.35s ease;
+      }
+
+      @keyframes heartPop {
+        0% {
+          transform: scale(1);
+        }
+        30% {
+          transform: scale(1.4);
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .book-card .btn-read {
+        background: #3d2c1f;
+        border: none;
+        color: #fff;
+        padding: 6px 20px;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: 0.3s;
+        letter-spacing: 0.3px;
+      }
+      .book-card .btn-read:hover {
+        background: #5a3f2e;
+        transform: scale(1.03);
+        color: #fff;
+      }
+      .book-card .btn-read i {
+        margin-right: 4px;
+      }
+
+      /* ===== PAGINATION ===== */
+      .pagination-custom {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 32px;
+      }
+      .pagination-custom .page-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: #fff;
+        color: #3d2c1f;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: 0.25s;
+        box-shadow: 0 2px 8px rgba(61, 44, 31, 0.04);
+        border: 1px solid rgba(201, 179, 165, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pagination-custom .page-btn:hover {
+        background: #f5ede8;
+        border-color: #b09584;
+        transform: translateY(-2px);
+      }
+      .pagination-custom .page-btn.active {
+        background: #3d2c1f;
+        color: #fff;
+        border-color: #3d2c1f;
+        box-shadow: 0 4px 16px rgba(61, 44, 31, 0.2);
+      }
+      .pagination-custom .page-btn i {
+        font-size: 0.9rem;
+      }
+      .pagination-custom .page-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      /* ===== FAVORITES EMPTY STATE ===== */
+      .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background: #fff;
+        border-radius: 30px;
+        box-shadow: 0 4px 24px rgba(61, 44, 31, 0.04);
+        border: 1px dashed rgba(201, 179, 165, 0.3);
+      }
+      .empty-state i {
+        font-size: 4rem;
+        color: #d4c0b4;
+        margin-bottom: 18px;
+      }
+      .empty-state h4 {
+        color: #3d2c1f;
+        font-weight: 600;
+      }
+      .empty-state p {
+        color: #7a6759;
+        max-width: 380px;
+        margin: 0 auto;
+      }
+
+      /* ===== TOAST ===== */
+      .toast-container-custom {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast-custom {
+        background: #3d2c1f;
+        color: #f5ede8;
+        padding: 14px 28px;
+        border-radius: 60px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast-custom i {
+        font-size: 1.2rem;
+        color: #f7c948;
+      }
+
+      @keyframes slideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 991px) {
+        .sidebar-wrapper {
+          position: relative;
+          top: 0;
+          margin-bottom: 28px;
+        }
+        .book-card .card-img-top {
+          height: 180px;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+      @media (max-width: 576px) {
+        .page-header h2 {
+          font-size: 1.3rem;
+        }
+        .search-wrap {
+          padding: 4px 8px 4px 16px;
+        }
+        .search-wrap input {
+          font-size: 0.85rem;
+          padding: 8px 0;
+        }
+        .search-wrap button {
+          padding: 8px 16px;
+          font-size: 0.8rem;
+        }
+        .book-card .card-img-top {
+          height: 160px;
+        }
+        .pagination-custom .page-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 0.85rem;
+        }
+        .toast-container-custom {
+          left: 16px;
+          right: 16px;
+          bottom: 16px;
+        }
+        .toast-custom {
+          padding: 12px 20px;
+          font-size: 0.85rem;
+        }
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        background: #141111;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 40px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+
+      .footer .logo {
+        color: white;
+      }
+
+      .footer .logo i {
+        color: var(--soft-coral);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 28px;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 14px;
+      }
+
+      .footer-links a:hover {
+        color: var(--soft-coral);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 18px;
+      }
+
+      .social-icons a {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 20px;
+        transition: var(--transition);
+      }
+
+      .social-icons a:hover {
+        color: var(--soft-coral);
+        transform: translateY(-4px);
+      }
+
+      /* OFFCANVAS */
+      /* Trigger Button */
+      .btn-open-sidebar {
+        background: #412b20;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 60px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-open-sidebar:hover {
+        background: #c48b59;
+        transform: scale(1.03);
+        box-shadow: 0 12px 30px rgba(196, 139, 89, 0.35);
+      }
+
+      /* Sidebar Custom Colors (Bootstrap overrides) */
+      .offcanvas#readerSidebar {
+        /* background: #1f140e; */
+        background-color: rgb(57, 36, 21);
+        color: #fbfbfb;
+        width: 280px;
+        border-right: 2px solid rgba(196, 139, 89, 0.25);
+      }
+
+      .offcanvas#readerSidebar .offcanvas-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .offcanvas#readerSidebar .brand-text {
+        font-family: "Playfair Display", serif;
+        font-weight: 800;
+        font-size: 24px;
+        color: #ffffff;
+      }
+
+      .offcanvas#readerSidebar .brand-text span {
+        color: #c48b59;
+      }
+
+      .offcanvas#readerSidebar .brand-icon {
+        font-size: 28px;
+        color: #c48b59;
+        margin-right: 14px;
+      }
+
+      /* Nav Links */
+      .offcanvas#readerSidebar .nav-link {
+        color: rgba(255, 255, 255, 0.65);
+        border-radius: 10px;
+        padding: 13px 20px;
+        transition: all 0.25s ease;
+      }
+
+      .offcanvas#readerSidebar .nav-link:hover {
+        background: rgba(196, 139, 89, 0.15);
+        color: #ffffff;
+        transform: translateX(5px);
+      }
+
+      .offcanvas#readerSidebar .nav-link.active {
+        background: rgba(196, 139, 89, 0.2);
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #c48b59;
+      }
+
+      .offcanvas#readerSidebar .nav-link i {
+        width: 22px;
+        color: #c48b59;
+      }
+
+      /* Logout link */
+      .offcanvas#readerSidebar .nav-link.logout {
+        color: #e07c7c;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 12px;
+        padding-top: 20px;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout i {
+        color: #e07c7c;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout:hover {
+        background: rgba(224, 124, 124, 0.12);
+        color: #ff9a9a;
+      }
+
+      /* Close button */
+      /* .offcanvas#readerSidebar .btn-close-white {
+            
+             
+            opacity: 1;
+        }
+
+        .offcanvas#readerSidebar .btn-close-white:hover {
+            filter: brightness(1);
+            opacity: 1;
+        } */
+
+      /* Trigger Card */
+      .trigger-card {
+        background: white;
+        padding: 50px 60px;
+        border-radius: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+        text-align: center;
+        max-width: 500px;
+      }
+
+      .trigger-card .trigger-icon {
+        font-size: 48px;
+        color: #c48b59;
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      .trigger-card h3 {
+        font-family: "Playfair Display", serif;
+        color: #1f140e;
+      }
+
+      .trigger-card .trigger-text {
+        color: #7a6a5a;
+        margin: 8px 0 28px;
+      }
+
+      /* for book detail */
+      /* Book Card Style */
+
+      .book-card2 {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 15px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease;
+      }
+
+      .book-card2:hover {
+        transform: translateY(-5px);
+      }
+
+      .book-cover2 {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 15px;
+      }
+
+      .btn-read-book2 {
+        background-color: #3c2a21;
+        color: #ffffff;
+        border-radius: 25px;
+        font-weight: 500;
+      }
+
+      .btn-read-book2:hover {
+        background-color: #1a120b;
+        color: #ffffff;
+      }
+
+      /* Modal Horizontal Card Customization */
+      .modal-content2 {
+        border-radius: 24px;
+        overflow: hidden;
+        border: none;
+      }
+
+      .modal-cover-img2 {
+        width: 100%;
+        height: 100%;
+        min-height: 350px;
+        object-fit: cover;
+      }
+
+      .badge-genre2 {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-weight: 500;
+      }
+
+      /* စစချင်း မပေါ်ခင် ပုံစံ */
+      .animation-section {
+        opacity: 0;
+        transform: translateY(50px); /* အောက်ကို 50px လျှော့ထားမည် */
+        transition: all 0.8s ease-out; /* ပေါ်လာသည့် ကြာချိန်နှင့် ပုံစံ */
+      }
+
+      /* စခရင်ထဲ ရောက်လာသည့်အခါ ပေါ်လာမည့် ပုံစံ */
+      .animation-section.active {
+        opacity: 1;
+        transform: translateY(0); /* မူလနေရာသို့ ရောက်မည် */
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+      <a href="#" class="logo">
+        <i class="fas fa-graduation-cap"></i>
+        Reader Cafe
+      </a>
+      <ul class="nav-links">
+        <li><a th:href="@{/user/user-dashboard}">Home</a></li>
+        <li><a th:href="@{/user/home}">Books</a></li>
+        <li><a th:href="@{/user/favorites}">Favorites</a></li>
+        <li><a th:href="@{/user/feed}">Social</a></li>
+        <li><a th:href="@{/user/profile}">Profile</a></li>
+      </ul>
+      <div>
+        <button
+          class="btn-open-sidebar"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#readerSidebar"
+        >
+          <i class="fas fa-bars me-1"></i>
+        </button>
+        <button
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-whatever="@mdo"
+          class="btn-open-sidebar"
+          type="button"
+        >
+          <i class="fas fa-paper-plane me-2"></i> Book Request
+        </button>
+      </div>
+      <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Book Request</button> -->
+    </nav>
+
+    <!-- ============================================================
+MAIN CONTENT
+============================================================ -->
+    <main class="container py-4 py-lg-5 mt-4" style="flex: 1">
+      <div class="row g-4">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="col-lg-3 animation-section">
+          <div class="sidebar-wrapper">
+            <div class="sidebar-title">
+              <i class="fas fa-tags"></i> BOOK GENRE
+            </div>
+            <div id="genreFilterContainer">
+              <!-- genres injected by JS -->
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Romance');
+                  return false;
+                "
+              >
+                <i class="fas fa-heart"></i> Romance
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Fiction');
+                  return false;
+                "
+              >
+                <i class="fas fa-book-journal-whills"></i> Fiction
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Non-Fiction');
+                  return false;
+                "
+              >
+                <i class="fas fa-chalkboard-user"></i> Non-Fiction
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Mystery');
+                  return false;
+                "
+              >
+                <i class="fas fa-user-secret"></i> Mystery
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Sci-fi');
+                  return false;
+                "
+              >
+                <i class="fas fa-user-astronaut"></i> Sci-fi
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Beauty');
+                  return false;
+                "
+              >
+                <i class="fas fa-face-grin-hearts"></i> Beauty
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Science');
+                  return false;
+                "
+              >
+                <i class="fas fa-microscope"></i> Science
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Technology');
+                  return false;
+                "
+              >
+                <i class="fas fa-microchip"></i> Technology
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Programming');
+                  return false;
+                "
+              >
+                <i class="fas fa-code"></i> Programming
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Biography');
+                  return false;
+                "
+              >
+                <i class="fas fa-pencil"></i> Biography
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('History');
+                  return false;
+                "
+              >
+                <i class="fas fa-landmark"></i> History
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Business');
+                  return false;
+                "
+              >
+                <i class="fas fa-user-tie"></i> Business
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Economic');
+                  return false;
+                "
+              >
+                <i class="fas fa-chart-simple"></i> Economic
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Health');
+                  return false;
+                "
+              >
+                <i class="fas fa-comment-medical"></i> Health
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Travel');
+                  return false;
+                "
+              >
+                <i class="fas fa-plane-arrival"></i> Travel
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Nature');
+                  return false;
+                "
+              >
+                <i class="fas fa-tree"></i> Nature
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Translate');
+                  return false;
+                "
+              >
+                <i class="fas fa-language"></i> Translate
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Self-improvement');
+                  return false;
+                "
+              >
+                <i class="fas fa-user"></i> Self-improvement
+              </span>
+              <span
+                class="genre-chip"
+                onclick="
+                  searchCategory('Literature');
+                  return false;
+                "
+              >
+                <i class="fas fa-book"></i> Literature
+              </span>
+            </div>
+
+            <!-- <div class="sidebar-stats">
+              <div class="stat-item">
+                <span><i class="fas fa-book"></i> စာအုပ်ပေါင်း</span>
+                <span class="badge-stat" id="totalBooksStat">0</span>
+              </div>
+              <div class="stat-item">
+                <span><i class="fas fa-heart"></i> အနှစ်သက်ဆုံး</span>
+                <span class="badge-stat" id="favBooksStat">0</span>
+              </div>
+            </div> -->
+          </div>
+        </aside>
+
+        <!-- ===== MAIN PANEL ===== -->
+        <section class="col-lg-9">
+          <!-- Search + header -->
+          <div class="page-header">
+            <h2 id="pageTitle"><i class="fas fa-book"></i> Book Catalog</h2>
+            <span
+              class="book-count"
+              id="resultCount"
+              th:text="${totalEbooks} + ' Books' "
+              >0</span
+            >
+          </div>
+
+          <!-- Search bar -->
+          <div class="search-wrap mb-4">
+            <form action="/user/home" method="get">
+              <input
+                type="text"
+                name="keyword"
+                th:value="${keyword}"
+                placeholder="Search author , title , genre"
+              />
+              <button type="submit"><i class="fas fa-search"></i>Search</button>
+            </form>
+          </div>
+<!-- Alert Message -->
+          <div th:if="${param.success != null and param.success[0] == 'requested'}"
+            class="alert alert-primary alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Premium Requested Successfully!</strong>  Please wait for a moment. If any problem arises, contact customer service.
+             
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- Book grid -->
+          <div class="row g-4 animation-section">
+            <!-- <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <h4>စာအုပ်မတွေ့ပါ</h4>
+                            <p>သင့်ရှာဖွေမှုနှင့်ကိုက်ညီသော စာအုပ်မရှိပါ။ ကျေးဇူးပြု၍ အခြားသောကဏ္ဍကို စမ်းကြည့်ပါ။</p>
+                        </div> -->
+            <!-- rendered by JS -->
+            <div class="col-sm-6 col-xl-4" th:each="book : ${books}">
+              <div class="book-card">
+                <img
+                  th:src="${book.coverImageUrl != null ? book.coverImageUrl : 'https://via.placeholder.com/200x250'}"
+                  class="card-img-top book-card-img rounded-top-3"
+                  alt="Cover"
+                />
+                <div class="card-body">
+                  <h5 class="card-title" th:text="${book.title}"></h5>
+                  <div class="card-author">
+                    <p>
+                      <i class="fas fa-user-pen"></i
+                      ><span th:text="${book.author}"></span>
+                    </p>
+                  </div>
+                  <span class="card-genre-success">
+                    <i class="fas fa-tags"></i>
+                    <span th:text="${book.genre}"></span>
+                  </span>
+                  <span class="card-genre">
+                    <i class="fas fa-download"></i>
+                    <span
+                      th:text="${book.downloadCount  !=null ? book.downloadCount + '  downloads' : 0}"
+                    ></span>
+                  </span>
+                  <span class="card-genre">
+                    <i class="fas fa-eye"></i>
+                    <span
+                      th:text="${book.viewCount != null ? book.viewCount +' views' : 0}"
+                    ></span>
+                  </span>
+
+                  <span
+                    th:if="${book.isPremium}"
+                    class="fs-5 badge text-dark position-absolute top-0 end-0 m-2"
+                    style="background-color: rgba(238, 178, 27, 0.758)"
+                  >
+                    <i class="fas fa-crown"></i> Premium
+                  </span>
+
+                  <div class="card-actions">
+                    <!-- <form th:action="@{/user/books/favorite/{id}(id=${book.id})}" method="post">
+                        <button
+                        type="submit"
+                        book.favorite ? 
+                        
+                        class="btn-fav  "
+                         
+                        th:classappend="${favoriteBookIds.contains(book.id)} ? 'active' : '' " 
+                      >
+                        <i class="fas fa-heart"  ></i>
+                      </button>
+                      </form> -->
+                    <div class="card-actions">
+                      <button
+                        type="button"
+                        class="btn-fav fav-btn"
+                        th:data-id="${book.id}"
+                        th:classappend="${favoriteBookIds != null && favoriteBookIds.contains(book.id)} ? 'active' : ''"
+                      >
+                        <i class="fas fa-heart"></i>
+                      </button>
+                    </div>
+
+                    <!-- Favorite Toggle Form -->
+
+                    <a
+                      th:href="@{/user/books/detail/{id}(id=${book.id})}"
+                      class="btn btn-read btn-sm w-100 mt-3 rounded-pill"
+                    >
+                      Read Book
+                    </a>
+                    <!-- <a
+                        th:href="@{/user/books/read/{id}(id=${book.id})}"
+                        class="btn btn-read btn-sm w-100 mt-3 rounded-pill"
+                      >
+                        Read Book 
+                      </a> -->
+                    <!-- data-* attribute များသုံး၍ HTML တွင် Data သိမ်းဆည်းခြင်း -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-custom" th:if="${totalPages > 1}">
+            <!-- rendered by JS -->
+            <!-- previous -->
+            <a
+              class="btn page-btn"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+              th:href="@{/user/home(page=${currentPage - 1}, keyword=${keyword})}"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </a>
+            <!-- //numbers -->
+            <a
+              class="page-btn btn"
+              th:href="@{/user/home(page=${i}, keyword=${keyword})}"
+              th:text="${i + 1}"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              1
+            </a>
+
+            <!-- next -->
+            <a
+              class="page-btn btn"
+              th:href="@{/user/home(page=${currentPage + 1}, keyword=${keyword})}"
+              th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <a href="#" class="logo">
+        <i class="fas fa-mug-saucer"></i>
+        Reader Cafe
+      </a>
+      <div class="footer-links">
+        <a href="#">Services</a>
+        <a href="#">Privacy</a>
+        <a href="#">Help</a>
+      </div>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+      </div>
+    </footer>
+
+    <!-- ==================== BOOK DETAIL MODAL POPUP ==================== -->
+
+    <!-- OFFCANVAS -->
+    <!-- ===== OFFCANVAS SIDEBAR ===== -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="readerSidebar"
+      aria-labelledby="readerSidebarLabel"
+    >
+      <!-- Header -->
+      <div class="offcanvas-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-mug-saucer brand-icon"></i>
+          <span class="brand-text"
+            >Reader <span class="text-warning">Cafe</span></span
+          >
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <!-- Body -->
+      <div class="offcanvas-body">
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item">
+            <a th:href="@{/user/user-dashboard}" class="nav-link">
+              <i class="fas fa-house text-warning me-3"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/home}" class="nav-link">
+              <i class="fas fa-book text-warning me-3"></i> Book Catalog
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="@{/user/favorites}" class="nav-link">
+              <i class="fas fa-heart text-warning me-3"></i> Favorites
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/profile}" class="nav-link">
+              <i class="fas fa-user-astronaut text-warning me-3"></i> Profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/feed}" class="nav-link">
+              <i class="fas fa-user-friends text-warning me-3"></i> Reader-Community
+            </a>
+          </li>
+          <!-- <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock-rotate-left me-3"></i> History
+                    </a>
+                </li> -->
+
+          <!-- 👑 Premium User မဟုတ်သေးပါက ပြသမည့် Buy Premium Button -->
+          <!-- <li th:unless="${user?.isPremium}" class="nav-item px-3 py-1">
+            <a
+              th:href="@{/user/request-premium}"
+              class="nav-link btn btn-outline-warning text-warning d-flex align-items-center justify-content-center gap-2 py-2 px-3 rounded-3 fw-semibold border-warning-subtle shadow-sm transition-all"
+            >
+              <i class="fas fa-crown text-warning"></i>
+              <span>Upgrade to Premium</span>
+            </a>
+          </li> -->
+
+          <li th:unless="${user?.isPremium}" class="nav-item">
+            <a th:href="@{/user/request-premium}" class="nav-link">
+              <i class="fas fa-crown text-warning me-3"></i> Subscribe Premium
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/messages/user-messages}" class="nav-link">
+              <i class="fas fa-envelope text-warning me-3"></i> Message
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="nav-link text-danger fw-bold">
+                <i class="fas fa-right-from-bracket me-3 text-danger"></i>
+                Logout
+              </button>
+            </form>
+          </li>
+
+          <!-- 🌟 Premium User ဖြစ်နေလျှင် ပြသမည့် Badge Box -->
+          <li th:if="${user?.isPremium}" class="nav-item px-3 py-2">
+            <div
+              class="p-3 rounded-3 bg-dark bg-gradient border border-warning border-opacity-25 shadow-sm"
+            >
+              <div class="d-flex align-items-center mb-1">
+                <span
+                  class="badge bg-warning text-dark me-2 rounded-pill px-2 py-1"
+                >
+                  <i class="fas fa-crown me-1"></i> PRO
+                </span>
+                <span class="fw-semibold text-light small">Premium Active</span>
+              </div>
+              <div class="text-white-50 extra-small" style="font-size: 0.78rem">
+                Expires:
+                <span
+                  th:text="${user.premiumExpiryDate}"
+                  class="text-warning fw-medium"
+                  >2026-12-31</span
+                >
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Footer -->
+        <div
+          class="mt-5 pt-3 text-center"
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.812);
+            font-size: 12px;
+          "
+        >
+          <i class="fas fa-mug-saucer me-1"></i> version 1.0 · Reader Cafe
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+TOAST CONTAINER
+============================================================ -->
+    <div class="toast-container-custom" id="toastContainer"></div>
+
+    <!-- REQUEST BOOK CONTAINER -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <form
+          action="/user/request/save"
+          method="post"
+          th:object="${bookRequest}"
+          class="modal-content"
+        >
+          <div
+            class="modal-header"
+            style="background-color: #3c2818; color: white"
+          >
+            <h5 class="modal-title" id="exampleModalLabel">
+              Book Request Form
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" style="background-color: rgb(242, 236, 236)">
+            <div>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label"
+                  >Book Title :</label
+                >
+                <input
+                  name="bookTitle"
+                  type="text"
+                  class="form-control"
+                  id="recipient-name"
+                  placeholder="Enter Book Title"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label"
+                  >Author :</label
+                >
+                <input
+                  name="authorName"
+                  type="text"
+                  class="form-control"
+                  id="recipient-name"
+                  placeholder="Enter Author"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Note :</label>
+                <textarea
+                  name="message"
+                  class="form-control"
+                  id="message-text"
+                  placeholder="Enter Note  ( Optional )"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+            >
+              Cancle
+            </button>
+            <button
+              type="submit"
+              class="btn text-white"
+              style="background-color: #654e3c"
+            >
+              <i class="fas fa-paper-plane"></i> Send Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- ============================================================
+BOOTSTRAP JS
+============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ============================================================
+MAIN APPLICATION
+============================================================ -->
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+
+      // querySelectorAll ပြောင်းလိုက်ပါ ( class နာမည်တူ အကုန်လုံးကို ဖမ်းပေးပါမည် )
+      const targetSections = document.querySelectorAll(".animation-section");
+
+      // Section တစ်ခုချင်းစီကို observer ထဲ လိုက်ထည့်ပေးခြင်း
+      targetSections.forEach((section) => {
+        observer.observe(section);
+      });
+
+      // 1. Navbar scroll effect
+      const navbar = document.getElementById("navbar");
+      window.addEventListener("scroll", () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 40);
+      });
+
+      function searchCategory(categoryName) {
+        // 1. Search Box ထဲက ရိုက်ထားတဲ့ စာကို ယူမည်
+        // const inputVal = document.getElementById('navbarSearchInput').value.trim();
+
+        // 2. စာရိုက်ထားရင် Category + Text ပေါင်းမည်၊ မရိုက်ထားရင် Category တစ်ခုတည်း ပို့မည်
+        let finalKeyword = categoryName;
+        // if (inputVal !== '') {
+        //     finalKeyword = categoryName + ' ' + inputVal;
+        // }
+
+        // 3. မင်းရဲ့ မူလ Controller `/user/home?keyword=...` ဆီ တိုက်ရိုက် သွားမည်
+        window.location.href =
+          "/user/home?keyword=" + encodeURIComponent(finalKeyword);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".fav-btn").forEach((button) => {
+          button.addEventListener("click", function (e) {
+            e.preventDefault(); // Page reload ဖြစ်ခြင်းကို တားဆီးသည်
+
+            const bookId = this.getAttribute("data-id");
+
+            // Spring Security (CSRF) သုံးထားပါက CSRF Token ရယူခြင်း
+            const csrfHeaderName = document
+              .querySelector("meta[name='_csrf_header']")
+              ?.getAttribute("content");
+            const csrfToken = document
+              .querySelector("meta[name='_csrf']")
+              ?.getAttribute("content");
+
+            const headers = { "Content-Type": "application/json" };
+            if (csrfHeaderName && csrfToken) {
+              headers[csrfHeaderName] = csrfToken;
+            }
+
+            // AJAX ဖြင့် Backend ဆီ လှမ်းပို့ခြင်း
+            fetch(`/user/books/favorite/${bookId}`, {
+              method: "POST",
+              headers: headers,
+            })
+              .then((response) => {
+                if (response.status === 401) {
+                  window.location.href = "/login";
+                  return;
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data && data.success) {
+                  // isFavorite ပေါ်မူတည်ပြီး 'active' class ကို Toggle လုပ်ပေးမည်
+                  if (data.isFavorite) {
+                    this.classList.add("active");
+                  } else {
+                    this.classList.remove("active");
+                  }
+                }
+              })
+              .catch((error) => console.error("Error:", error));
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

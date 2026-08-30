@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to Premium - Reader Café</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #2d3748;
+            min-height: 100vh;
+        }
+
+        /* Gradient Glow Background Header */
+        .header-title {
+            background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 100%);
+             -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Modern Modern Pricing Card */
+        .plan-card {
+            background: #ffffff;
+            border-radius: 28px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(66, 153, 225, 0.12);
+        }
+
+        /* Popular Card Gradient Accent */
+        .plan-card.popular {
+            border: 2px solid #f6ad55;
+            background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            transform: rotate(45deg);
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 6px 40px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3);
+        }
+
+        /* Price Tag Text */
+        .price-text {
+            font-weight: 800;
+            font-size: 2.75rem;
+            letter-spacing: -1px;
+        }
+
+        /* YCC Discount Box inside Ad Cards */
+        .ycc-discount-tag {
+            background: rgba(254, 215, 215, 0.4);
+            border: 1.5px dashed #feb2b2;
+            border-radius: 18px;
+            padding: 12px 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Glassmorphism Payment Selector */
+        .payment-card {
+            cursor: pointer;
+            border: 2px solid #edf2f7;
+            border-radius: 20px;
+            background: #ffffff;
+            transition: all 0.25s ease;
+        }
+
+        .payment-card:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .payment-card.active {
+            border-color: #3182ce;
+            background: linear-gradient(135deg, #ebf8ff 0%, #ebf8ff 100%);
+            box-shadow: 0 8px 20px rgba(49, 130, 206, 0.15);
+        }
+
+        .payment-card.active-ycc {
+            border-color: #e53e3e !important;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff5f5 100%) !important;
+            box-shadow: 0 8px 20px rgba(229, 62, 62, 0.15) !important;
+        }
+
+        .qr-img {
+            max-width: 140px;
+            border-radius: 16px;
+            border: 2px solid #edf2f7;
+            padding: 6px;
+            background: #fff;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+            color: #2d3748;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(214, 158, 46, 0.3);
+            background: linear-gradient(135deg, #d69e2e 0%, #b7791f 100%);
+            color: #fff;
+        }
+
+        /* Custom Form Control Focus */
+        .form-control:focus, .form-select:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15);
+        }
+                     /* စစချင်း မပေါ်ခင် ပုံစံ */
+.animation-section {
+  opacity: 0;
+  transform: translateY(50px); /* အောက်ကို 50px လျှော့ထားမည် */
+  transition: all 0.8s ease-out; /* ပေါ်လာသည့် ကြာချိန်နှင့် ပုံစံ */
+}
+
+/* စခရင်ထဲ ရောက်လာသည့်အခါ ပေါ်လာမည့် ပုံစံ */
+.animation-section.active {
+  opacity: 1;
+  transform: translateY(0); /* မူလနေရာသို့ ရောက်မည် */
+}
+
+    </style>
+</head>
+<body class="py-5">
+
+    <div class="container">
+        <!-- Title Header -->
+        <div class="text-center mb-5">
+            <span class="badge rounded-pill bg-white text-primary px-3 py-2 shadow-sm mb-3 font-monospace">PREMIUM ACCESS</span>
+            <h1 class="fw-extrabold display-4 header-title mb-2">Reader Café Premium</h1>
+            <p class="text-muted fs-6">Unlocks all exclusive books and unlimited reading access!</p>
+            <a th:href="@{/user/home}" class="btn btn-danger text-white">Back to Books!</a>
+        </div>
+      
+        <!-- 🏷️ Ad Cards Section -->
+        <div class="row g-4 justify-content-center mb-5 animation-section">
+            <!-- 1 Month Card -->
+            <div class="col-md-5 col-lg-4">
+                <div class="card plan-card p-4 text-center h-100 justify-content-between">
+                    <div>
+                        <div class="text-uppercase text-muted fw-bold small mb-2">Standard Plan</div>
+                        <h3 class="fw-bold text-dark mb-3">1 Month</h3>
+                        <div class="d-flex justify-content-center align-items-baseline mb-4">
+                            <span class="price-text text-primary me-2">5,000</span>
+                            <span class="fw-bold text-secondary">MMK</span>
+                        </div>
+                        <ul class="list-unstyled text-secondary text-start mx-auto fs-6 mb-4" style="max-width: 220px;">
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-primary me-2 fs-5"></i> Access all Premium Books</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-primary me-2 fs-5"></i> Unlimited Downloads</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-primary me-2 fs-5"></i> 30 Days Validity</li>
+                        </ul>
+                    </div>
+
+                    <!-- ⚡ YCC Pay Offer Banner -->
+                    <div class="ycc-discount-tag text-center">
+                        <small class="text-danger fw-bold d-block text-uppercase" style="letter-spacing: 0.5px;"><i class="fas fa-bolt me-1"></i> YCC Pay Special Price</small>
+                        <span class="fw-extrabold text-dark fs-5">4,500 MMK</span>
+                        <span class="badge bg-danger ms-1">10% OFF</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Months Card (Highlighted) -->
+            <div class="col-md-5 col-lg-4">
+                <div class="card plan-card popular p-4 text-center h-100 justify-content-between">
+                    <div class="popular-badge">POPULAR</div>
+                    <div>
+                        <div class="text-uppercase text-warning fw-bold small mb-2" style="color: #dd6b20 !important;">Best Value</div>
+                        <h3 class="fw-bold text-dark mb-3">3 Months</h3>
+                        <div class="d-flex justify-content-center align-items-baseline mb-4">
+                            <span class="price-text text-warning me-2" style="color: #dd6b20 !important;">13,000</span>
+                            <span class="fw-bold text-secondary">MMK</span>
+                        </div>
+                        <ul class="list-unstyled text-secondary text-start mx-auto fs-6 mb-4" style="max-width: 220px;">
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-warning me-2 fs-5"></i> Access all Premium Books</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-warning me-2 fs-5"></i> Unlimited Downloads</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle text-warning me-2 fs-5"></i> 90 Days Validity</li>
+                            <li class="mb-3 d-flex align-items-center text-danger fw-bold"><i class="fas fa-gift me-2 fs-5"></i> Save 2,000 MMK</li>
+                        </ul>
+                    </div>
+
+                    <!-- ⚡ YCC Pay Offer Banner -->
+                    <div class="ycc-discount-tag text-center" style="background: rgba(254, 235, 200, 0.5); border-color: #fbd38d;">
+                        <small class="fw-bold d-block text-uppercase" style="color: #c05621 !important; letter-spacing: 0.5px;"><i class="fas fa-bolt me-1"></i> YCC Pay Special Price</small>
+                        <span class="fw-extrabold text-dark fs-5">11,700 MMK</span>
+                        <span class="badge bg-warning text-dark ms-1">10% OFF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎁 Special Discount Banner -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-danger-subtle text-danger p-3 rounded-circle me-3">
+                            <i class="fas fa-bolt fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1 text-dark">Special Discount with YCC Pay!</h6>
+                            <small class="text-muted">Choose <strong>YCC Pay E-Wallet</strong> at checkout to automatically enjoy an instant <strong>10% OFF</strong> discount.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📁 Submit Payment Form Card -->
+        <div class="row justify-content-center animation-section">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg p-4 p-md-5 rounded-5 bg-white">
+                    <h4 class="fw-bold mb-4 text-dark d-flex align-items-center">
+                        <i class="fas fa-wallet text-warning me-3 fs-3"></i> Submit Payment Proof
+                    </h4>
+                    
+                    <form th:action="@{/user/request-premium}" method="post" enctype="multipart/form-data">
+                        
+                        <!-- 1. Plan Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">1. Choose Package</label>
+                            <select name="months" class="form-select form-select-lg border-2 rounded-4 py-3" required>
+                                <option value="1">1 Month Plan — 5,000 MMK (YCC Pay: 4,500 MMK)</option>
+                                <option value="3">3 Months Plan — 13,000 MMK (YCC Pay: 11,700 MMK)</option>
+                            </select>
+                        </div>
+
+                        <!-- 2. Choose Payment Method -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">2. Select Payment Method</label>
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <div class="card payment-card text-center p-3" onclick="selectPayment('KBZPay', this)">
+                                        <input type="radio" name="paymentMethod" value="KBZPay" class="d-none" required>
+                                        <img src="data:image/png;base64,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" alt="">
+                                        <span class="fw-bold small d-block">KBZPay</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card payment-card text-center p-3" onclick="selectPayment('WavePay', this)">
+                                        <input type="radio" name="paymentMethod" value="WavePay" class="d-none">
+                                        <img src=" data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8PDw8PDhANDg0PDhAQDw8QDxAXEA8RFREWGBQSExMYHikgGBomJxMTITEiJSkrLjAuFyAzODMtNygtLisBCgoKDg0OFxAQGi0hHyUrLSsvKy0tLi0rKy4tLSstMCs3Li4tLS0tLTIrLSsrNS8tLS0tKysvKzArKy0vKystLf/AABEIAOEA4QMBEQACEQEDEQH/xAAbAAEBAAIDAQAAAAAAAAAAAAAAAQUGAgMEB//EAEMQAAICAAIHAwkECAQHAAAAAAABAgMEEQUGEiExQVFhcYETIjJSkaGxwdFCYnKyFCMkM1OCkvDC0uHiNENUY3ODov/EABsBAQEAAgMBAAAAAAAAAAAAAAABBQYDBAcC/8QAQhEAAgECAgUJBgIIBQUAAAAAAAECAwQFESExQVFxBhJhgZGhscHREyIyQuHwFFIVIyRicoKS0jOisuLxFiU0U1T/2gAMAwEAAhEDEQA/APqp56ZIhAGQAAhCggBACAhCgAhACFBAQAEAIUhAGQEABACAMgIChkBCAEAYKCAAHoMocIABACAjIUAAgBAQhQAQgBCggIACAEKQgDICAAgBAGQEBQQEIAQBgoIAQHoMocIAAAIUhACAAAhSEAAIQAhQQEABACFIQBkBCAAAgDIUgAICEAIACggBAegyhwggAKQgAAIAQEBQQEZAAAQoICAAhQyAhAQgBAAAQAhSAAgIQAgAKCAEB3mTOIEAAAAIAACFIQAAhACFBARgAgAKQgBAQgBAAAQEIUEBCAAAgAKCAEB3mSOIAAgAAABAQhQAQgPBj9MUU7pyzn6kd8vHp4mWscEvLxc6nHKP5noXq+pM6VziNC30Seb3LS/p1mFv1rl/y6klyc5N+5fU2ShyOhl+uqt/wrLvefgYipj0vkh2vyXqed604j1aP6Z/5jt/9IWX559sf7Tg/Ttxuj2P1Odetli9OquX4ZSj8czgqcjbdr9XVkuKT8OackMeqr4oJ8G16mRw2tFEt01Op9qzj7V9DD3PJK9p6aTU10aH2PR3nfo45bz0TTj3ru9DL0YiFi2q5RnHrFpo1uvb1aEuZVi4vc1kZanVhVXOg010HYcByAAhACAEAAIQoICEAIAACFBAADvMicQAAAIACkIAARgGq6c0+23XQ8ordKxcZdkXyXb/AG98wTk5GCVe7Wctai9S4730alt06taxDFnJunReS2vfw6OnsNdNxMAQoIwCFIQEMnofRmJskp07VUf4rbSa7PW+BgcYxbD7eDpXGU3+TJPt2R8dxkrCyuaslOl7q/Nq/wCfA2qzSVWHio33xnYlvyj5z/kjwNBhhdzf1HO1oOMHqzehfzSyz6szZpXlK2io1qicu/sRj7tbKV6MLZduUUvjmZalyNu5LOdSMe1+SOlPH6C+GMn2LzOta3V86bPCUTlfIqtsrR7H6s41yhp7ab7UevD6zYWe5ylW/vx3e1ZpGNuOSmI0lnGKmv3Xp7Hl3ZnbpY3az0NuPFeazRlqrYzSlCUZRfBxaafijXqtKpSk4VIuL3NZPvMpCpGa50Hmt6ObOI+iAoZAQgBAGCggBAADvMgcQAAKQAEAAABr+tOknCKpg8pTWc2uKh08fgbbyXwtVqjuqi92Lyj0y39XjwMHjN46cfYwel6+H18DUj0A1cFBGAcWCFjFyajFNybySS3t9ESc4wi5SeSWtvUiqLk1FLNmx4TRFOGgr8a05fZq4rPpl9qXu+JpV3jV1iNV2uGppbZ6tG/P5V0/E9m4z9DD6NrD2129OyP3rfcu88Ok9YLbc41501cEovzmu2XyXvMphnJq2tcp1f1k971J9C83m+B07vF61b3Ye7Hctfb6d5hjZDEkYBACMpDtwuLspe1VOUH2Pc+9Pc/E6t1ZW93DmV4KS6dnB611M5aNerRlzqcmn97NT6zadE60RnlDEJVze5TXoPv9X4Gg4tySqUU6tnnOP5fmXD83jxNmscchUahX9179n08DY0zTGbACAhACAAoIAQAA7jvnGAAAAAAQgJKSSbe5JZssYuTUY63oI2ks2fO8biXbZOx/bk2uxcl7Mj2OytY2tvCjH5Vl17X1vNmhXFZ1qsqj2v8A47joO2cJGARghEum9vcl1DaSzYNqwOFrwFPl71nfJZRjzTfCEe3qzQL68r43dfhLV5Ulrex5fM+j8q2vTw2a2oU8Oo+3rfG9S8l0735GuaQxtl83Ox5v7KXoxXRG52GH0bGiqVFcXtb3v70bDX7m5qXFTnzfoug8p3TgIyggIQEIyggIRgGd1e086WqrW3Q9yk+NX+34Gp8oeTkbyLuLdZVdq2T/AN257dT3rN4XiroNUqrzhv8Ay/TwN2Tz3renwfU8vaabT1m4p56UCAEABQQAgAB3HfOMAAAhAAAAY/T92xhrnzcdj+pqPzMtgNH2uIUYvY8/6U34pHRxOpzLWo+jLt0GhnrJpJACMEIUGf1VwCblibMlCvPYz4bSW+Xh/fA0/lTiMoxjZUfinry15PQo/wAz7uJnMGtE27ipqjq47X1ePAxumdIvEWuW/wAnHNVx6R697M1g2Fxw+3UPmemT3vdwWpdu0x9/eO6quXyrUuj1Z4DLHSIUEBCAEZSEAICEAOJSG2an6Vz/AGab3pN1N9OcPDiuzPoee8sMIUH+OpLXonx2S69T6ct7NowK+z/Z5v8Ah9OrWujgbSaEbKAAQoIAAADtO8cYAAAIACgAw2tj/Zn2zh8c/kbHyUWeIL+GXkYnGn+yvijS8z001AjYIQoEIuTUVvlJqKXVt5JHxOcYRc5aElm+CKouTUVreg2fWG1YfDVYWHGS878K4vxfzNG5P0pYhf1cQqrQno4vV/THyNixSatbaFrDbr4be1+ZqxvhrZACMpCAEBCFBAQgBGUhADnRfKucbI+lCSku9cjiuKELilOlU+GSafWfdKrKlOM4608z6dhr1ZCFkfRnFSXc1meF3NCVvWnRnri2n1PI9GpVVVpxnHU0n2nYcJyggBAAAAdp3T4AAAAAIAAYXWeSlhZuLT2LIp5cmpJNe82XkzGVLEYKay50XlntTWafcYjF2p2knF55NeORpR6YagCggIZTVqjbxVefCGdj8Fu97RgeUtx7HDqmWuWUe3X3ZmSwml7S6jnszfZ9cjr1gxPlMTa+UX5OPdHc/fte05eT9r+Hw+lHa1znxlp8Ml1Hxidb2t1N7tHZ9czGmZOgRlIQAAhxZQQAAhADiUgKCAG96n37WFS/hzlDwz2l+Y8m5X2/ssScl88VLr+F+BuuBVOfaJflbXn5mbNXMyAAQAAAHadw+AAAAAQAxOsek/IV7MHlbZmo/dXOX99TYOTuFK9uOdUX6uGl9L2R830cTF4re/h6XNj8UtXRvf3tMPoP9bhMXTxks5xz5tx3e+HvNixtK2xS0utnwvty8JPsMVh/66zr0dutdnqjXszcDA5gAAGf1OWVl0/VqXvef+E1DlhnKhRpr5p+WXmZzAslUqS3R8/oa+5uWcnxk833vezboxUUorUtBg3Jy957dJ2YbDztkoVxc5PkunVvkjhubqja03UrSUY7395t9COSjRqVpcyms2ZunVK1rOdtcH0UXL35o1WvyztoyypUpSW9tR9fIzNPk/Wks5zS6s/Q44jVO5LOFldnY04vw4n1Q5Z2s3lVpyj0rKS8n3MlTAK8VnCSl3epg8Vh7KpbFkZQl0fPtT4PwNptrqjc0/aUZKS3r70dZhqtGpRlzakcmdJ2DiICEAIykIARlBAQ3HUZ/qrl/wB1flX0PNuXK/aaD/dfibbycf6qov3vJGzGjmxAgAAAAB2HcPgAAAAAmYPn+ncX5bEWS+zF7EPwxeXveb8T1zA7JWllThlpa5z4v0WS6jRsRuPb3EpbFoXBfXSdureL8liIZ+jZ+rl4+j70vacHKOzdzYT5vxR95dWvuzOTCrj2VzHPVLQ+vV3nm0vhfI32Q4JSzj+F718cvA7uE3ivLOnW2tZPitD9eB172h7CvOGzPRweleh4zInVABntU3vxK5ulZeG19TU+VSy/CyepVF5ehm8Femsv3fU1+CbySWbeSS6t8EbZOSinKWhLSYOKbyS2n0LQ+jo4epRWTm99kvWl9FyPHcXxSpiFw6j+FaIrcvV636JG+WFnG1pKK17XvfpuPcYo7oAPNpDA14iDhYs1yf2ovrFncsMQr2NZVaLy3rY1uf3o2HXurWncw5lRde1dKPnmkMHKi2VU+MeD5Si+EkewYffU723jXp6ns3Paurv1miXVvO3qunPZ3reeY7p1yMEIUAoOIABDddSK8qJy9a55dyjFfU8w5b1VK9pw3Q8W/Q3Dk9DK3lLfLwSNiNNM+CAAAAAHYds+AAAACnTjbdiqyfqVyl7E2dizpe2uKVJ/NKK7WjhuKns6U57k33HzVHtbPPVoRcxkMzP6U/asLXil+9qWxcl06/PukzUMLf6MxGpYS+CfvQ9OzRxS3mcvP2u0jcr4o6JevnwZrxt5gwUGY1Tu2cSovhZXOPjul/hZrXKyi54e5rXCSl5eZlsFqc26UX8ya8/I69C4TLHQra3VWTz/AJE8n7VE5Mavedg860fnjH/Nln3NnHh9vlfxpv5W+7PLvyN7PKDdgACAAGr674dbNVq4qTrfc02vg/abxyJumqla3eprnLitD7muw1zlDRXMhV6cu3T5d5qR6EaucSkBQRgEBCMA+kaBwvkcNVB7pbO1JdJS85r35eB4rj12rrEK1Ras8lwjo78s+s9Bw2h7G1pwevLN8XpMgYc7wAAAAAB2HaPkAAAAHi01/wANf/4Z/lZk8Gf/AHC3z/OvE6eIf+LV/hfgfPD2E0MgBktBaRVFjU99Ni2bE+CXKWXZn7GzCY7hjvaCdLRUh70X5dezpSMhh14replP4JaH6/ew4ab0c8PZkt9U/Oql1Xq59V9DkwXFY39vnLRUjokunflufc81sPnELN21XJfC9Kfl1GPMwdA7MLe6rIWLjCal35PevHejr3dvG5oToy1STXbt6tZyUarpVI1FsaZtv6Olj6b4b68RXLJ8tpQz96Sfgzzz8TKWCVrSponSkll0c/yea7DafZKOIU68fhmn25ea8zPmpGcBAACEKYDXWaWHiubujl4RkzbeRkG7+ctig+9xMHygklbRW+S8GaSenmnEKCMAgIQAyeruj/0jERTWdcPPs6ZLhHxeXvMHyhxNWFlKSfvy92PF7epaeOW8yOF2n4m4imvdWl+nW+7M+injJvwAAAAAAAOZ2T5AAAAB1Yurbrsh68JR9qaOe1rexr06r+WSfY0zirQ9pTlDemu0+Zpnt552tQzAABndD4yF1f6HiXuf7iznF8o5/D2GpYxY1rOv+krJafnjsktr9f6t5m7G4p3FP8Hcavle57vTsMVpHA2YebhYu2Mlwmuq+hn8OxGjf0VVovitsXuf3pMZdWtS2qcyp1PY1v8AvUeU7x1jbNUsfGcVh7Mtut7VTfq80u1ZvwfYefcrMOnRqO8pfDNc2fHRk+DyX8yW82jBLuM4+wnrjpjw+nhwNmNHNiBAQFABpWueNU7Y1ReaqTcvxy5eCy9p6XyNsHStpXElpqPR/CtvW8+pI1DHrlVKypLVHXxfovE143EwJGUEAAIWquU5KME5Sk8opcWz4q1YUoSqVHlFLNt7EfUISnJRis29h9E0DotYapR3OyXnWS6y6LsR41juLSxK5dTVBaIro38Xr7FsN9w2xVpR5vzPS30+iMkYUyAAAAAAAAOZ2D5AAAIAAD55pvDeSxFsOW05R/DLevi14HseC3f4qxpVNuWT4rQ/DM0LEKPsbmcOnNcHp+h4TKHTABAQ2LR+lKsRBYbG7/4dze9Plm+T7efPt03EcJuLCs77Df5obGuhbV0a1rj0Z61vaVzBW931S+u/p27enHaX0Nbhnm/Pqz3WJbu6S5MzGE47b4jHKPuz2xevq3rvW1HRvsOq2rzemO/13eBj6rJQkpQbjKLzi1xTMvVpQqwlTqLOLWTT2o6MJyhJSi8mtTN20JrBXelCxqu/hk/Rn2xfyPLsa5N17KTqUU50u1x6H69uRuOH4tTuEoVPdn3Ph6GaNZMwCNgwWndYYUpwqanfw3b419sn17DacD5NVrySq3CcaXTocuhbUuns3rC4ji8KCcKTzn3Lj09HaaPKTbbbbbbbb4tvi2epxioxUYrJLQkaa2223rOJ9EIAAQ50UzskoVxc5ye6K4s4q9enQpurVkoxWts+6dOdSShBZt7DedX9BRwy255Sva3vlBdI/U8p5Qcop4jL2VL3aS2bZPe/Jdb06t0wzC42q589M33dC9TNmsGYAAAAAAAAAOR2D5AAIAAADW9csDtQjfFb4ebP8Le5+D/MbryOxBQqztJvRL3o8VrXWvA17HrXnQjXjs0Ph9H4monoZqwzKCAEAMzonWCdK8navLUZZbL9KK6LPiuxmtYtybo3cvbUH7OrrzWpvpy1P95ad6ZlrLFp0F7OoufDdtXquhnuu0Lh8UnZgrIxlxdTz2U+7jD4GKpY9fYZJUcTptrZNa316pdz3ncnhttdxdS0kk/y7PVeBgMdgLaXlbCUV62WcH3SW422yxK1vI863mpdG1cVrRg7i0rUHlVi107O3Uc8PpfE1rKF1iXRtSS7trPI4bjBbCvJyqUYt70sn3ZHJSxC6pLKFR5dvjmTEaWxNiyndY10T2U+9RyzLb4NYW8udSoxT35ZvtebJVv7mqsp1Hl2eGR4jKHUIAQAsYuTUYpyk+CSbb7kj5lKMIuUnkltehBJyfNSzZm9Har325O39TDt3zfdHl4mrYjyusrZOND9bLo+H+rb1Z8UZm1wO4qvOp7i7+z17DbtG6Lpw0cqo736U3vnLvfy4HneJYtdYhPnV5aNkVoiuC83m+k2q0saNrHKmuL2v77D2mMO2AAAAAAAAAADkc58gAAAAAHG2tTi4yScZJqSfBp8UfdOpOlONSDyaeae5o+ZwjOLjJZp6D53pjR0sNa4PNxe+uXrR+q4P/U9iwjE4YhbKrHRLVJbn6PWvozQ76zla1XB6tj3r1W36nhModMAgAIAWuxxalFyjJcJRbTXc0fNSnCpFwmk09aazXYWMpRalF5PetZmsJrRfBbNihfH726XtW73GsXfJGyqvn0W6UujSux6exozFDHLiCyqJTXTofb9D0rSOjbf3uHdUnxcY7vbDf7jo/ovlBa/4Fwprc3p/wAyf+o7H4zDK3+LS5r6F/bp7iPA6Ln6OIlX/Pl+dFWI8pKWidupdX9svIfhcKn8NVx6/wC5HF6HwH/Wr+uo5FjmNbbL/UfDw7D/AP6O+J1y0do6PpYucvwbL+EWckcUx6p8Nmlxf+5Hw7PDY667fDL0Z6tE4HR91jhVC67ZW1Kc3JQXTNZre+7kY/FsQxy0oKpXqQp5vJRis5PtTWhbc/E7Vla4dXqcynGUstLbzy8vA2XDYSupZVwhBfdiln35Gj3N5cXLzrzlPi2+7Uuo2Klb0qKypxS4I7zrHMCAAAAAAAAAAAAA5HMfIAAAAAAIDx6U0fDE1uE9z4xkuMJdUZHDMTrYfXVWnwa2SW70ex9h1byzhdU+ZPqe5nz/AEhgbMPN12LJ8mvRmusWeu4fiFC+oqrRea2ranuf3p2GjXNrUtqnMqLr2PpR5junXABMykIAAAUEAICHZhsPO2ca605Tk8kvm+iOC5uaVtSlWrPKK1v727ltZyUaU601Tgs2z6JobRscNUoLfJ75y9aX06HjeM4rUxK5dWWiK0RW5er1v0SN+sLKNpSUFpetvez3mJO6CAAAAAAAAAAAAAAHI5T5AAAAKQAAAA8+OwVd8HC2KlHl1i+qfJnbsr+vZVfa0JZPua3NbV9o4Li2pXEOZUWa8DTdK6uXU5yrzuq6xXnx748+9e49JwrlTa3eUK36ufT8L4PyfVmaje4NWoZyp+/Ho1rivTsRgzaDDgAFBMwAAQEPZo3Rd2IllXHzc983uhHx59yMZiWL2uHw51eWnZFaZPq83kuk7dpY1rqWVNaN+xffQbzobQ9eFjlHzrJLz7Gt77F0XYeVYxjdfEqmc/dgtUVqXS976ew3Sww6naRyjpk9b+9SMkYYyAIAAAAAAAAAAAAAAACnKQAAAAAgAAAABCA8OP0Ph799la2vXj5svFrj4mWsccvrLRRqPm/lemPY9XVkdK5w63uNM46d60Pu8zB4nU/+Fc12WRz/APpfQ2i25cPVcUeuL8n6mGq8nf8A11O1ea9DHz1UxS4eRl3TfzRlocssNkve58eMfRs6MsBu1q5r6/ocFqti/VrX/sRyPlfhf5pf0s+Vgd5uXaeinVC9+nZVBdm1J+zd8Tp1+W1nH/CpzlxyivFvuOenyeuJfHKK7X6GXwWquHryc9q6X3t0f6V88zXb3lhf1040sqa6NMu1+SRlbfAbanpnnN9OrsXnmZyEFFJRSjFbkksku5GqznKcnKbbb1t6W+szMYqKyiskcj5PoEAAAAAAAAAAAAAAAAAKchAAAAAQgAAAAAABAAAAAUEAABAAAAAAAAAAAAAAAAAAAAAfZAAAAAAAQAAAAAAAFBAAAACAAAAAAAAAAAAAAAAAAAAAAH0QAAAAAAAAFAAABAAAACAAAAAAAAAAAAAAAAAAAAAAAAAH0AAAAAAAQAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/9k=" alt="">
+                                        <span class="fw-bold small d-block">WavePay</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card payment-card text-center p-3" onclick="selectPayment('YCC_PAY', this)">
+                                        <input type="radio" name="paymentMethod" value="YCC_PAY" class="d-none">
+                                        <i class="fas fa-bolt text-danger fs-2 mb-2"></i>
+                                        <span class="fw-bold small d-block text-danger">YCC Pay</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Dynamic QR & Details Box -->
+                        <div id="payment-details-box" class="card bg-light border-0 p-4 mb-4 d-none text-center rounded-4">
+                            <h6 id="selected-wallet-name" class="fw-bold text-primary mb-1">Account Info</h6>
+                            <p id="wallet-number" class="mb-3 fw-bold fs-5 text-dark">09-123456789</p>
+                            <div class="mb-2">
+                                <img id="wallet-qr" src="" alt="QR Code" class="qr-img shadow-sm">
+                            </div>
+                            <small class="text-muted">Scan QR Code to make payment</small>
+                        </div>
+
+                        <!-- 4. Upload Proof Screenshot with Live Preview -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">3. Upload Payment Receipt</label>
+                            <input type="file" name="paymentProof" class="form-control form-control-lg border-2 rounded-4" accept="image/*" onchange="previewImage(event)" required>
+                            
+                            <div id="preview-container" class="mt-3 text-center d-none">
+                                <img id="imagePreview" src="#" alt="Receipt Preview" class="img-thumbnail rounded-4 shadow-sm" style="max-height: 220px;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-submit w-100 py-3 rounded-4 fs-5 shadow">
+                            <i class="fas fa-crown me-2"></i> Subscribe Premium
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                  const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+
+// querySelectorAll ပြောင်းလိုက်ပါ ( class နာမည်တူ အကုန်လုံးကို ဖမ်းပေးပါမည် )
+const targetSections = document.querySelectorAll('.animation-section');
+
+// Section တစ်ခုချင်းစီကို observer ထဲ လိုက်ထည့်ပေးခြင်း
+targetSections.forEach((section) => {
+  observer.observe(section);
+});
+
+
+
+
+        const paymentDetails = {
+            'KBZPay': {
+                account: '09-123456789 (KBZPay - Reader Cafe)',
+                qr: 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KBZPay-09123456789'
+            },
+            'WavePay': {
+                account: '09-987654321 (WavePay - Reader Cafe)',
+                qr: 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=WavePay-09987654321'
+            },
+            'YCC_PAY': {
+                account: 'YCC-88991122 (YCC Pay Wallet - Reader Cafe)',
+                qr: 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=YCCPay-88991122'
+            }
+        };
+
+        function selectPayment(method, element) {
+            document.querySelectorAll('.payment-card').forEach(card => {
+                card.classList.remove('active', 'active-ycc');
+            });
+
+            if(method === 'YCC_PAY') {
+                element.classList.add('active-ycc');
+            } else {
+                element.classList.add('active');
+            }
+
+            const radio = element.querySelector('input[type="radio"]');
+            radio.checked = true;
+
+            const box = document.getElementById('payment-details-box');
+            document.getElementById('selected-wallet-name').innerText = method + ' Account Details';
+            document.getElementById('wallet-number').innerText = paymentDetails[method].account;
+            document.getElementById('wallet-qr').src = paymentDetails[method].qr;
+
+            box.classList.remove('d-none');
+        }
+
+        function previewImage(event) {
+            const input = event.target;
+            const container = document.getElementById('preview-container');
+            const preview = document.getElementById('imagePreview');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.classList.remove('d-none');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>

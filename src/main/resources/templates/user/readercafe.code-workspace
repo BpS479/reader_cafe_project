@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "readercafe",
+			"path": "../../../../.."
+		}
+	],
+	"settings": {
+		"java.project.sourcePaths": [
+			"readercafe/src/main/java/com/readercafe"
+		]
+	}
+}

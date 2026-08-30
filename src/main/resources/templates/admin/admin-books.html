@@ -1,0 +1,418 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Books - Reader Cafe Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome Icons (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <!-- Bootstrap Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body>
+    <!-- <nav class="navbar-cafe">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          margin-left: 250px;
+        "
+      >
+        <h2 style="color: white; margin: 0">Manage Books</h2>
+        <div class="">
+          <a href="#" onclick="alert('Notifications')">🔔 Notifications</a>
+          <a href="">Logout</a>
+        </div>
+      </div>
+    </nav> -->
+
+    <div style="display: flex">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/admin :: aside}"></div>
+
+      <!-- Main Content -->
+      <div class="main-content" style="flex: 1">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dcc8;
+            padding-bottom: 1rem;
+          "
+        >
+          <h1 class="cafe-header" style="margin: 0">Book Management</h1>
+           
+          <div class=" ">
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-danger" type="submit">
+                Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <nav
+          class="navbar navbar-expand-lg navbar-light bg-transparent rounded-3"
+        >
+          <div class="container-fluid">
+            <!-- <a class="navbar-brand me-3" href="#"
+              ><span class="text-warning"><i class="fas fa-coffee"></i></span>
+              Reader Cafe</a
+            > -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/admin-dashboard}"
+                    ><i class="fas fa-dashboard"></i> Dashboard</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/admin-books}"
+                    ><i class="fas fa-book"></i> Book Catalog</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/users}"
+                    ><i class="fas fa-user-circle"></i> Users</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/premium-requests}"
+                    ><i class="fas fa-crown"></i> Premium Request</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/view-request}"
+                    ><i class="fas fa-paper-plane"></i> Book Requests</a
+                  >
+                </li>
+                <li class="nav-item me-">
+                  <a class="nav-link" th:href="@{/messages/admin-messages}"
+                    ><i class="fas fa-message"></i> Messages</a
+                  >
+                </li>
+              </ul>
+              <div class="me-1">
+                <form th:action="@{/admin/books/add}" method="get" class="d-flex">
+                  <button class="btn btn-success" type="submit">
+                    <i class="fas fa-add"></i>Add Book
+                  </button>
+                </form>
+              </div>
+              <form
+                th:action="@{/admin/admin-books}"
+                method="get"
+                class="d-flex"
+              >
+                <input
+                  class="form-control me-2"
+                  name="keyword"
+                  type="search"
+                  placeholder="Title, Author, Genre"
+                  aria-label="Search"
+                />
+                <button class="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="cafe-card" style="margin-bottom: 2rem; padding: 1.5rem">
+          <div class="row g-3">
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Total Books
+                    <span class="fs-4  " style="color: #43260f;"
+                      ><i class="fas fa-database"></i
+                    ></span>
+                  </h5>
+                  <span class="fs-6  " style="color: #ff005d;"
+                    ><i class="fas fa-book"></i
+                  ></span>
+                  <span
+                    class="fs-6  " style="color: #43260f;"
+                    th:text="${#lists.size(bookCount)} + ' Books'"
+                    >0 Books
+                  </span>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Total Downloads
+                    <span class="fs-4 " style="color: #43260f;"
+                      > <i class="fas fa-download"></i
+                    ></span>
+                  </h5>
+                  <span class="fs-6  " style="color: #ff005d;"
+                    ><i class="fas fa-download"></i
+                  ></span>
+                  <span class="fs-6  " style="color: #43260f;" th:text="${sumDownload != null ? sumDownload + ' Times' : 0}">0 Times </span>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <div>
+                    <form
+                      class=""
+                      th:action="@{/admin/admin-books}"
+                      method="get"
+                    >
+                      <select name="keyword" class="form-select">
+                        <option>All Categories</option>
+                        <option th:value="Romance">Romance</option>
+                        <option th:value="Fiction">Fiction</option>
+                        <option th:value="Non-Fiction">Non-Fiction</option>
+                        <option th:value="Science">Science</option>
+                        <option th:value="Sci-fi">Sci-fi</option>
+                        <option th:value="Mystery">Mystery</option>
+                        <option th:value="Technology">Technology</option>
+                        <option th:value="Programming">Programming</option>
+                        <option th:value="Biography">Biography</option>
+                        <option th:value="History">History</option>
+                        <option th:value="Business">Business</option>
+                        <option th:value="Economic">Economic</option>
+                        <option th:value="Beauty">Beauty</option>
+                        <option th:value="Health">Health</option>
+                        <option th:value="Travel">Travel</option>
+                        <option th:value="Nature">Nature</option>
+                        <option th:value="Translate">Translate</option>
+                        <option th:value="Self-improvement">
+                          Self-improvement
+                        </option>
+                        <option th:value="Literature">Literature</option>
+                      </select>
+                      <button type="submit" class="btn-cafe-outline">
+                        <i class="fas fa-sliders-h"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Books Table -->
+        <div class="cafe-card">
+          <div class="table-responsive">
+            <table id="booksTable" class="table table-hover">
+              <thead style="background-color: #73534d;">
+                <tr  >
+                  <th class="text-white">Cover</th>
+                  <th class="text-white">Title</th>
+                  <th class="text-white">Author</th>
+                  <th class="text-white">Category</th>
+                  <th class="text-white">Upload Date</th>
+                  <th class="text-white">View</th>
+                  <th class="text-white">Downloads</th>
+                  <th class="text-white">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="book : ${books}">
+                  <td>
+                     
+                    <img
+                      class="book-cover"
+                      th:src="${book.coverImageUrl != null ? book.coverImageUrl : 'https://via.placeholder.com/50x70'}"
+                      alt="cover"
+                    />
+                   
+                  </td>
+                  <td>
+                    <a class="text-decoration-none fw-bold" th:href="@{/admin/books/detail/{id}(id=${book.id})}" th:text="${book.title}"> </a> 
+                  </td>
+                  <td th:text="${book.author}">Paulo Coelho</td>
+                  <td th:text="${book.genre}">Fiction</td>
+                  <td th:text="${book.createdAt}"></td>
+                  <td th:text="${book.downloadCount}"></td>
+                  <td>
+                    <span
+                      th:text="${book.viewCount != null ? book.viewCount : 0}"
+                      class="text-bg-dark"
+                      >Available</span
+                    >
+                  </td>
+                  <td>
+                    <a
+                      th:href="@{/admin/books/edit/{id}(id=${book.id})}"
+                      class="btn-cafe rounded-circle btn-sm"
+                      style="background-color: #4f7fb2; margin-right: 0.5rem"
+                      ><i class="fas fa-edit"></i
+                    ></a>
+                    <a
+                      th:href="@{/admin/books/delete/{id}(id=${book.id})}"
+                      class="btn-cafe rounded-circle btn-sm"
+                      style="background-color: #d7636f"
+                      onclick="
+                        return confirm(
+                          'Are you sure you want to delete this book',
+                        );
+                      "
+                      ><i class="fas fa-trash-can"></i
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            style="
+              padding: 1.5rem;
+              border-top: 1px solid #e8dcc8;
+              display: flex;
+              justify-content: center;
+            "
+          >
+            <div class="pagination" th:if="${totalPages > 1}">
+              <!-- Previous Button -->
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/admin-books(page=${currentPage - 1}, keyword=${keyword})}"
+              >
+                ← Previous
+              </a>
+              <span class="disabled" th:if="${currentPage == 0}"
+                >← Previous</span
+              >
+
+              <!-- Page Numbers -->
+              <a
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:href="@{/admin/admin-books(page=${i}, keyword=${keyword})}"
+                th:text="${i + 1}"
+                th:classappend="${currentPage == i} ? 'active'"
+              >
+                1
+              </a>
+
+              <!-- Next Button -->
+              <a
+                th:if="${currentPage < totalPages - 1}"
+                th:href="@{/admin/admin-books(page=${currentPage + 1}, keyword=${keyword})}"
+              >
+                Next →
+              </a>
+              <span class="disabled" th:if="${currentPage == totalPages - 1}"
+                >Next →</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Confirm Delete</h5>
+          <button
+            onclick="closeModal('deleteModal')"
+            style="
+              background: none;
+              border: none;
+              font-size: 1.5rem;
+              cursor: pointer;
+            "
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete this book? This action cannot be
+            undone.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cafe-outline" onclick="closeModal('deleteModal')">
+            Cancel
+          </button>
+          <button
+            class="btn btn-cafe"
+            style="background-color: #dc3545"
+            onclick="confirmDelete()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+      function confirmDelete() {
+        alert("Book deleted successfully!");
+        closeModal("deleteModal");
+      }
+
+      // Search functionality
+      document
+        .getElementById("searchInput")
+        .addEventListener("keyup", function () {
+          const filter = this.value.toLowerCase();
+          const rows = document.querySelectorAll("#booksTable tbody tr");
+
+          rows.forEach((row) => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+          });
+        });
+
+      //search keyword for category card
+      function searchCategory(categoryName) {
+        //Category တစ်ခုတည်း ပို့မည်
+        let finalKeyword = categoryName;
+
+        //မင်းရဲ့ မူလ Controller `/user/home?keyword=...` ဆီ တိုက်ရိုက် သွားမည်
+        window.location.href =
+          "/admin/admin-books?keyword=" + encodeURIComponent(finalKeyword);
+      }
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Reader Cafe LMS - Books Catalog</title>
+    <th:block th:replace="~{fragments/admin-layout :: common-head}"></th:block>
+    <style>
+        .book-cover {
+            width: 48px;
+            height: 68px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .table-middle td {
+            vertical-align: middle;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="dashboard-container">
+
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>E-Books Catalog</h1>
+                    <p class="subtitle-bright">System overview, monitoring, and digital library data configurations</p>
+                </div>
+                <div class="header-actions">
+
+                    <!-- Modal -->
+                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasWithBackdrop" aria-controls="offcanvasWithBackdrop">
+                        <i class="fa-solid fa-folder-open"></i>
+                        Navigator
+                    </button>
+
+
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        data-bs-whatever="@mdo"><i class="fa-solid fa-plus"></i> Add New Book</button>
+
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="btn-danger">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </header>
+
+            <!-- Top Metric Cards -->
+            <div class="metrics-row ">
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <h3>TOTAL E-BOOKS TRACKED</h3>
+                        <p class="metric-value" id="totalBooksCount" th:text="${#lists.size(books)} + ' Books'">0</p>
+                        <span class="metric-sub green"><i class="fa-solid fa-arrow-up"></i> +2.1% increase</span>
+                    </div>
+                    <div class="metric-icon blue-bg">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <h3>LINK VERIFICATION</h3>
+                        <p class="metric-value text-bright-gold">All Links Active</p>
+                        <span class="metric-sub bright-cyan"><i class="fa-solid fa-sync fa-spin"></i> Continuous Cloud
+                            Synced</span>
+                    </div>
+                    <div class="metric-icon gold-bg">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search & Filter Area -->
+            <div class="card search-filter-card mb-25">
+                <form th:action="@{/admin/bookmanagement}" method="get">
+                    <div class="search-filter-grid">
+                        <div class="search-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="catalogSearch" name="keyword"
+                                placeholder="Search catalog by title, author, genre...">
+                        </div>
+                        <button type="submit" class="btn-success" id="filterBtn">
+                            <i class="fa-solid fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Books Data Table -->
+            <div class="card table-card">
+                <div class="table-container">
+                    <table id="booksTable">
+                        <thead>
+                            <tr>
+                                <th>COVER IMAGE</th>
+                                <th>BOOK TITLE</th>
+                                <th>AUTHOR NAME</th>
+                                <th>GENRE</th>
+                                <th>BRIEF DESCRIPTION</th>
+                                <th>VIEW</th>
+                                <th style="text-align: center;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="book : ${books}">
+
+                                <td class="ps-3">
+                                    <img th:src="${book.coverImageUrl != null ? book.coverImageUrl : 'https://via.placeholder.com/50x70'}"
+                                        class="book-cover" alt="Cover">
+                                </td>
+
+                                <td><strong class="text-bright" th:text="${book.title}">Atomic Habits</strong></td>
+                                <td class="text-secondary-bright" th:text="${book.author}">James Clear</td>
+                                <td class="text-secondary-bright" th:text="${book.genre}">HORROR</td>
+                                <td class="text-secondary-bright" th:text="${book.description}">An Easy & Proven Way to
+                                    Build Good Habits & Break Bad
+                                    Ones.</td>
+                                <td class="text-secondary-bright"
+                                    th:text="${book.viewCount != null ? book.viewCount : 0}">0</td>
+                                <td class="action-buttons">
+                                    <a th:href="@{'/admin/books/read/' + ${book.id}}" class="btn btn-action view"><i
+                                            class="fa-solid fa-eye"></i></a>
+                                    <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-action edit"><i
+                                            class="fa-solid fa-pen"></i></a>
+                                    <a th:href="@{/admin/books/delete/{id}(id=${book.id})}"
+                                        onclick="return confirm('ဒီစာအုပ်ကို ဖျက်မှာ သေချာပါသလား?');"
+                                        class="btn btn-action delete"><i class="fa-solid fa-trash"></i></a>
+
+                                    <!-- <a 
+                                        class="btn btn-sm btn-success w-100">Read
+                                        PDF</a> -->
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form for Adding New Book -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5><i class="fa-solid fa-book"></i> Add New Book Entry</h5>
+                    <span class="close-modal" id="closeModalBtn" data-bs-dismiss="modal">&times;</span>
+                </div>
+
+                <div class="modal-body">
+                    <form action="/admin/books/save" method="post" enctype="multipart/form-data" class="row g-3">
+                        <div class="  col-md-6 form-group">
+                            <input type="text" name="title" class="form-control" id="recipient-name"
+                                placeholder="Enter Book Title">
+                        </div>
+
+                        <div class=" col-md-6 form-group">
+                            <input name="author" class="form-control" id="message-text" placeholder="Author">
+                        </div>
+
+                        <div class=" col-md-12 form-group">
+                            <input name="description" class="form-control" id="message-text" placeholder="Description">
+                            <!-- <textarea class="form-control" id="message-text" rows="3">Description</textarea> -->
+                        </div>
+
+                        <div class=" col-md-12 form-group">
+                            <select id="bookGenre" name="genre" required>
+                                <option value="">Select genre</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="non-fiction">Non-Fiction</option>
+                                <option value="mystery">Mystery</option>
+                                <option value="romance">Romance</option>
+                                <option value="sci-fi">Sci-fi</option>
+                                <option value="science">Science</option>
+                                <option value="tech">Technology</option>
+                                <option value="programming">Programming</option>
+                                <option value="biography">Biography</option>
+                                <option value="history">History</option>
+                                <option value="business">Business</option>
+                                <option value="economic">Economics</option>
+                                <option value="health">Health</option>
+                            </select>
+                        </div>
+                        <div class=" form-group">
+                            <label for="bookPDF">PDF file</label>
+                            <input name="pdfFile" type="file" id="bookPDF" accept="application/pdf" class="form-control"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookCover">Upload Cover Image</label>
+                            <input name="imageFile" type="file" id="bookCover" accept="image/*" class="form-control"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Save
+                                Book</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="modal-overlay" id="addBookModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book"></i> Add New Book Entry</h2>
+                <span class="close-modal" id="closeModalBtn">&times;</span>
+            </div>
+
+            <form id="addBookForm" action="/admin/books/save" method="post" enctype="multipart/form-data">
+                <div class=" form-group">
+                    <label>Book Title</label>
+                    <input type="text" name="title" placeholder="Enter book title" required>
+                </div>
+                <div class=" form-group">
+                    <label>Author Name</label>
+                    <input type="text" name="author" placeholder="Enter author name" required>
+                </div>
+                <div class=" form-group">
+                    <label>Brief Description</label>
+                    <textarea name="description" rows="3" placeholder="Enter a short overview of the book..."
+                        required></textarea>
+                </div>
+                <div class=" form-group">
+                    <label>Genre</label>
+                    <select id="bookGenre" name="genre" required>
+                        <option value="">Select genre</option>
+                        <option value="fiction">Fiction</option>
+                        <option value="non-fiction">Non-Fiction</option>
+                        <option value="mystery">Mystery</option>
+                        <option value="romance">Romance</option>
+                        <option value="sci-fi">Sci-fi</option>
+                        <option value="science">Science</option>
+                        <option value="tech">Technology</option>
+                        <option value="programming">Programming</option>
+                        <option value="biography">Biography</option>
+                        <option value="history">History</option>
+                        <option value="business">Business</option>
+                        <option value="economic">Economics</option>
+                        <option value="health">Health</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>PDF file </label>
+                    <input type="file" name="pdfFile" accept="application/pdf" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Upload Cover Image</label>
+                    <input type="file" name="coverImage" accept="image/*" required>
+                </div>
+                <div class=" modal-footer">
+                    
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Save Book</button>
+                </div>
+            </form>
+        </div>
+    </div> -->
+
+
+    <!-- // Offcanvas Sidebar for Mobile View -->
+    <div th:replace="~{fragments/admin-layout :: sidebar}"></div>
+
+
+
+
+    <th:block th:replace="~{fragments/admin-layout :: common-scripts}"></th:block>
+</body>
+
+</html>

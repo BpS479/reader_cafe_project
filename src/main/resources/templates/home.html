@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Café - Welcome</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 CSS & JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --cafe-primary: #6f4e37;
+            --cafe-secondary: #c8a2c8;
+            --cafe-dark: #2c1d11;
+            --cafe-accent: #d4a373;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f5f0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-section {
+            background:  linear-gradient(rgba(20, 12, 6, 0.65), rgba(20, 12, 6, 0.75)), 
+                        /* url('https://images.unsplash.com/photo-1739015829043-f09c90b2cd71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover; */
+                        url('https://images.unsplash.com/photo-1739015828099-29531aa4bd1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+                        
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-btn-primary {
+            background: var(--cafe-accent);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .custom-btn-primary:hover {
+            background: #bc8a5f;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 163, 115, 0.4);
+        }
+
+        .custom-btn-outline {
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 10px 26px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .custom-btn-outline:hover {
+            background: #fff;
+            color: var(--cafe-dark);
+            transform: translateY(-2px);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            background: #fdfbf7;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.25);
+            border-color: var(--cafe-accent);
+        }
+
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+            background: #f1ece4;
+            border: 1px solid #e0e0e0;
+            color: var(--cafe-primary);
+        }
+
+        .input-group .form-control {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .feature-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid #f0e6df;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: #fefae0;
+            color: var(--cafe-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+
+        /* Search Header Section */
+        .hero-section2 {
+            /* background: linear-gradient(135deg, #2b1b17a2 0%, #422a2462 100%); */
+            color: #61371e;
+            padding: 50px 20px;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-input-group {
+            background: #ffffff;
+            border-radius: 50px;
+            padding: 5px 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .search-input-group input {
+            border: none;
+            box-shadow: none !important;
+        }
+
+        /* Book Card Style */
+        .book-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #edf2f7;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .book-cover-container {
+            position: relative;
+            width: 100%;
+            padding-top: 140%; /* 3:4 Aspect Ratio for Book Covers */
+            background-color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .book-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .premium-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(43, 27, 23, 0.85);
+            backdrop-filter: blur(4px);
+            color: #f39c12;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .book-details {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-author {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .btn-read-guest {
+            margin-top: auto;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            background-color: #2b1b17;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 6px 12px;
+        }
+
+        .btn-read-guest:hover {
+            background-color: #422a24;
+            color: #ffffff;
+        }
+        /* ===== PAGINATION ===== */
+      .pagination-custom {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 32px;
+      }
+      .pagination-custom .page-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: #fff;
+        color: #3d2c1f;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: 0.25s;
+        box-shadow: 0 2px 8px rgba(61, 44, 31, 0.04);
+        border: 1px solid rgba(201, 179, 165, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pagination-custom .page-btn:hover {
+        background: #f5ede8;
+        border-color: #b09584;
+        transform: translateY(-2px);
+      }
+      .pagination-custom .page-btn.active {
+        background: #3d2c1f;
+        color: #fff;
+        border-color: #3d2c1f;
+        box-shadow: 0 4px 16px rgba(61, 44, 31, 0.2);
+      }
+      .pagination-custom .page-btn i {
+        font-size: 0.9rem;
+      }
+      .pagination-custom .page-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-custom">
+        <div class="container">
+            <a class="navbar-brand brand-font fs-3 fw-bold" href="#">
+                <i class="fa-solid fa-mug-hot text-warning me-2"></i>Reader Café
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-menu navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="#features">About Us</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <button class="btn custom-btn-outline btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn custom-btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="fa-solid fa-user-plus me-1"></i> Register
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Hero Home Section -->
+    <section class="hero-section">
+        <div class="container text-center text-lg-start">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-3">
+                        <i class="fa-solid fa-star me-1"></i> Welcome to Reader Café
+                    </span>
+                    <h1 class="display-3 fw-bold mb-4">A Quiet Place For Your Next Chapter.</h1>
+                    <p class="lead mb-5 text-light opacity-85">
+A cozy haven where you can enjoy the aroma of coffee while reading and exploring a wide range of great books—all in one place. Create an account now and begin your reading journey.                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                        <button class="btn custom-btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="fa-solid fa-book-open me-2"></i> Get Started
+                        </button>
+                        <button class="btn custom-btn-outline btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i> Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Hero Section with Live Search Form -->
+<div class="hero-section2 text-center">
+    <div class="container" style="max-width: 650px;">
+        <h2 class="fw-bold mb-2" style="font-family: 'Playfair Display', serif;">Discover Your Next Great Read</h2>
+        <p class="small   mb-4">Browse our collection of books. Join us to start reading!</p>
+
+        <!-- Search Form -->
+        <form th:action="@{/login}" method="get">
+            <div class="input-group search-input-group">
+                <span class="input-group-text bg-transparent border-0 ps-3">
+                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                </span>
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Search by title, author, or genre...">
+                <button class="btn btn-warning rounded-pill px-4 fw-semibold" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Books Grid Container -->
+<div class="container">
+
+    <!-- Section Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">
+            <i class="fa-solid fa-book-bookmark me-2 text-warning"></i>Available Books
+        </h5>
+        <span class="badge bg-secondary rounded-pill" th:text="${books != null ? books.size() + ' Books' : '0 Books'}">0 Books</span>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(books)}" class="text-center py-5">
+        <i class="fa-solid fa-book-open fa-3x text-muted mb-3"></i>
+        <h6 class="text-muted">No books found. Try searching for something else!</h6>
+    </div>
+
+    <!-- Mobile Screen မှာ 2 Columns (col-6) ၊ Tablet မှာ 3 Columns (col-md-4) ၊ Desktop မှာ 4 Columns (col-lg-3) -->
+    <div class="row g-3">
+        <div th:each="book : ${books}" class="col-6 col-md-4 col-lg-3">
+            <div class="book-card">
+                
+                <!-- Book Cover -->
+                <div class="book-cover-container">
+                    <img th:if="${book.coverImageUrl != null && !book.coverImageUrl.empty}" 
+                         th:src="${book.coverImageUrl}" class="book-cover" alt="Book Cover">
+                    <img th:unless="${book.coverImageUrl != null && !book.coverImageUrl.empty}" 
+                         src="https://via.placeholder.com/300x420?text=No+Cover" class="book-cover" alt="Default Cover">
+                    
+                    <span th:if="${book.isPremium}" class="premium-tag">
+                        <i class="fa-solid fa-crown me-1"></i>PRO
+                    </span>
+                </div>
+
+                <!-- Book Info -->
+                <div class="book-details">
+                    <div class="book-title" th:text="${book.title}">Book Title</div>
+                    <div class="book-author" th:text="${book.author}">Author Name</div>
+
+                    <!-- Guest Read Button (Prompts Alert/Login) -->
+                    <button type="button" class="btn btn-read-guest" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <i class="fa-solid fa-lock me-1"></i> Read Book
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+     <!-- Pagination -->
+          <div class="pagination-custom" th:if="${totalPages > 1}">
+            <!-- rendered by JS -->
+            <!-- previous -->
+            <a
+              class="btn page-btn"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+              th:href="@{/login(page=${currentPage - 1}, keyword=${keyword})}"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </a>
+            <!-- //numbers -->
+            <a
+              class="page-btn btn"
+              th:href="@{/login(page=${i}, keyword=${keyword})}"
+              th:text="${i + 1}"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              1
+            </a>
+
+            <!-- next -->
+            <a
+              class="page-btn btn"
+              th:href="@{/login(page=${currentPage + 1}, keyword=${keyword})}"
+              th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+
+
+           <!-- 3. Features Section -->
+<section id="features" class="py-1">
+        <div class="container py-2">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold fs-1">Why Choose Reader Café?</h2>
+                <p class="text-muted">Services specially created for readers</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <h4>Vast Library</h4>
+                        <p class="text-muted">Easily search for and read a wide variety of books across numerous categories.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fa-solid fa-mug-saucer"></i>
+                        </div>
+                        <h4>Cozy Environment</h4>
+                        <p class="text-muted">A comfortable environment for reading and working in peace.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <h4>Community</h4>
+                        <p class="text-muted">A community of readers where literature enthusiasts can discuss and exchange ideas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+
+
+</div>
+
+
+<!-- Social Community Single Featured Component -->
+<div class="container py-5">
+    <div class="p-4 p-md-5 rounded-4 shadow-sm position-relative overflow-hidden" 
+         style="background-color: #ffffff; border: 1px solid #edf2f7;">
+        
+        <div class="row align-items-center g-4">
+            <!-- Left Side: Core Messaging -->
+            <div class="col-lg-6">
+                <span class="badge rounded-pill px-3 py-2 mb-3 fw-semibold" 
+                      style="background-color: #f7ede2; color: #2b1b17; font-size: 0.8rem;">
+                    <i class="fa-solid fa-users me-1"></i> Social Reading Community
+                </span>
+
+                <h2 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif; color: #2b1b17; font-size: 2rem;">
+                    Read, Share & Discuss Together
+                </h2>
+
+                <p class="text-muted mb-4 fs-6 lh-relaxed">
+                    Reader Café is more than just a library. Connect with fellow book lovers, share your insights on what you've read, and engage in meaningful conversations.
+                </p>
+
+                <a href="/register" class="btn btn-dark rounded-pill px-4 py-2 fw-semibold shadow-sm" style="background-color: #2b1b17; font-size: 0.9rem;">
+                    Join the Community <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <!-- Right Side: Feature Highlights inside 1 Container -->
+            <div class="col-lg-6">
+                <div class="p-3 p-md-4 rounded-4" style="background-color: #fbf9f5; border: 1px solid #f0eae1;">
+                    
+                    <!-- Feature 1: Build Profile -->
+                    <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" 
+                             style="width: 44px; height: 44px; background-color: #ffffff; border: 1px solid #e8dec8;">
+                            <i class="fa-solid fa-user text-dark fs-6"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1" style="color: #2b1b17;">Build Your Reader Profile</h6>
+                            <p class="text-muted small mb-0">Showcase your reading journey, favorite books, and personal bio to other readers.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: Post Thoughts -->
+                    <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" 
+                             style="width: 44px; height: 44px; background-color: #ffffff; border: 1px solid #e8dec8;">
+                            <i class="fa-solid fa-pen-to-square text-dark fs-6"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1" style="color: #2b1b17;">Share Book Posts</h6>
+                            <p class="text-muted small mb-0">Post your takeaways, mention books you've read, and express your thoughts anytime.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Discussions -->
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" 
+                             style="width: 44px; height: 44px; background-color: #ffffff; border: 1px solid #e8dec8;">
+                            <i class="fa-solid fa-comments text-dark fs-6"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1" style="color: #2b1b17;">Engage in Discussions</h6>
+                            <p class="text-muted small mb-0">Comment on community posts, react with likes, and exchange unique perspectives.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <!-- 4. Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <div class="modal-header border-0 pb-0">
+                    <h3 class="modal-title fw-bold text-dark"><i class="fa-solid fa-right-to-bracket me-2 text-warning"></i>Login</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+                    
+                    <!-- <div th:if="${param.registered}" class="alert alert-success text-center">
+                        
+                    </div> -->
+                </div>
+                <div class="modal-body">
+                    <!-- Registered successfully -->
+                    <span th:if="${param.registered}" class="text-success" role="alert">You have been registered successfully. Please Login Again</span>
+                    <span th:if="${param.loginError}" class="text-danger" role="alert">Email or Password is incorrect!</span>
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="text" name="email" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe">
+                                <label class="form-check-label text-muted" for="rememberMe">Remember me</label>
+                            </div>
+                            <a href="#" class="text-decoration-none small text-warning">Forgot password?</a>
+                        </div>
+                        <div class="text-center mb-2" th:if="${param.loginError}">
+                            <span class="text-danger small">Invalid email or password</span>
+                        </div>
+                        <button type="submit" class="btn custom-btn-primary w-100 py-3 fw-bold mb-3">Login to Account</button>
+                        <div class="text-center">
+                            <span class="text-muted">Don't have an account? </span>
+                            <a href="#" class="text-decoration-none fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">Register here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <div class="modal-header border-0 pb-0">
+                    <h3 class="modal-title fw-bold text-dark"><i class="fa-solid fa-user-plus me-2 text-warning"></i>Create Account</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/register}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                                <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+                                <input type="text" name="username" class="form-control" placeholder="username" required>
+                            </div>
+                            <div class="text-danger small mt-1" th:if="${userNameError}" th:text="${userNameError}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                            </div>
+                            <div class="text-danger small mt-1" th:if="${emailError}" th:text="${emailError}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                                <input type="password" name="password" class="form-control" placeholder="Create password" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                                <!-- ✅ name="confirmPassword" ဟု ပြင်ဆင်ထားပါသည် -->
+                                <input type="password" name="confirmPassword" class="form-control" placeholder="Confirm password" required>
+                            </div>
+                            <div class="text-danger small mt-1" th:if="${comfirmPasswordError}" th:text="${comfirmPasswordError}"></div>
+                        </div>
+
+                        <button type="submit" class="btn custom-btn-primary w-100 py-3 fw-bold mb-3">Register Now</button>
+                        <div class="text-center">
+                            <span class="text-muted">Already have an account? </span>
+                            <a href="#" class="text-decoration-none fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 Reader Café Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Error ရှိပါက Modal Auto ပြန်ဖွင့်ပေးမည့် Script -->
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            /*[# th:if="${param.registered}"]*/
+                var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            /*[/]*/
+
+            /* Login Error ပါလာပါက Login Modal ကို ပွင့်ပေးမည် */
+            /*[# th:if="${param.loginError}"]*/
+                var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            /*[/]*/
+
+            /* Register Error တစ်ခုခု ပါလာပါက Register Modal ကို ပြန်ဖွင့်ပေးမည် */
+            /*[# th:if="${userNameError != null or emailError != null or comfirmPasswordError != null}"]*/
+                var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                registerModal.show();
+            /*[/]*/
+        });
+    </script>
+    <!-- Logout Notification Toast Script -->
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // Spring Security ရဲ့ logout parameter ပါမပါ စစ်ဆေးခြင်း
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.has('logout')) {
+      // SweetAlert2 Toast Notification Setup
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top', // ညာဘက်အပေါ်ထောင့်တွင် ပြမည်
+        showConfirmButton: false,
+        timer: 3000, // ၃ စက္ကန့်ကြာရင် အလိုအလျောက် ပျောက်သွားမည်
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+
+      Toast.fire({
+        icon: 'success',
+        title: 'Logged out successfully!'
+      });
+    }
+  });
+</script>
+ 
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - Reader Cafe</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <!-- FontAwesome for Trash Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      /* UI လှပစေရန် Sidebar Layout နဲ့ Delete Button Style */
+      .user-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid #e8dcc8;
+        transition: background 0.2s;
+      }
+
+      .user-item:hover,
+      .user-item.active {
+        background-color: #e8dcc8;
+      }
+
+      .user-link {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        text-decoration: none;
+        color: inherit;
+        overflow: hidden;
+      }
+
+      .btn-delete-chat {
+        background: transparent;
+        border: none;
+        color: #8c857b;
+        padding: 6px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-delete-chat:hover {
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.15);
+      }
+
+      .chat-messages {
+        overflow-y: auto;
+        max-height: 450px;
+      }
+    </style>
+  </head>
+  <body>
+     
+
+    <div style="display: flex">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/admin :: aside}"></div>
+      <!-- Main Content -->
+      <div class="main-content" style="flex: 1">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dcc8;
+            padding-bottom: 1rem;
+          "
+        >
+          <h1 class="cafe-header" style="margin: 0">Messages from Users</h1>
+          <div class=" ">
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-danger" type="submit">
+                Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form> 
+          </div>
+        </div>
+        <!-- top nav bar -->
+        <div th:replace="~{fragments/admin :: navigation-bar}"></div>
+        <!-- <nav th:fragment="navigation-bar"  class="navbar navbar-expand-lg navbar-light bg-transparent rounded-3">
+          <div class="container-fluid">
+             <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item me-3">
+                  <a class="nav-link active" aria-current="page" th:href="@{/admin/admin-dashboard}"
+                    ><i class="fas fa-dashboard"></i> Dashboard</a
+                  >
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/admin-books}"><i class="fas fa-book"></i> Book Catalog</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/users}"><i class="fas fa-user-circle"></i> Users</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/view-request}"><i class="fas fa-paper-plane"></i> Requests</a>
+                </li>
+                <li class="nav-item me-3">
+                  <a class="nav-link" th:href="@{/admin/admin-books}"><i class="fas fa-message"></i> Messages</a>
+                </li>
+                 
+                 
+              </ul>
+              <form class="d-flex">
+                <input
+                  class="form-control me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                />
+                <button class="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
+            </div>
+          </div>
+        </nav> -->
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+          <!-- User List Sidebar -->
+          <div class="user-list">
+            <div style="padding: 1rem; border-bottom: 1px solid #e8dcc8">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search conversations..."
+              />
+            </div>
+
+            <!-- Dynamic User List Loop -->
+            <div
+              th:each="u : ${users}"
+              class="user-item"
+              th:classappend="${activeUser != null and activeUser.id == u.id} ? 'active' : ''"
+            >
+              <!-- Clickable User Profile Area -->
+              <a
+                th:href="@{/messages/admin-messages(receiverId=${u.id})}"
+                class="user-link"
+              >
+                <div
+                  class="user-avatar"
+                  th:text="${#strings.substring(u.name != null and !u.name.isEmpty() ? u.name : 'U', 0, 2).toUpperCase()}"
+                >
+                  JD
+                </div>
+                <div class="user-info">
+                  <h6
+                    th:text="${u.name != null and !u.name.isEmpty() ? u.name : u.email}"
+                  >
+                    John Doe
+                  </h6>
+                  <small>Click to view chat</small>
+                </div>
+              </a>
+
+              <!-- Delete Conversation Button (အမှိုက်ပုံး) -->
+              <form
+                th:action="@{/messages/admin/delete}"
+                method="post"
+                onsubmit="
+                  return confirm(
+                    'ဒီ User နဲ့ ပြောထားတဲ့ Chat History တစ်ခုလုံးကို ဖျက်မှာ သေချာပါသလား။',
+                  );
+                "
+                style="margin: 0"
+              >
+                <input type="hidden" name="receiverId" th:value="${u.id}" />
+                <button
+                  type="submit"
+                  class="btn-delete-chat"
+                  title="Delete Conversation"
+                >
+                  <i class="fas fa-trash-can"></i>
+                </button>
+              </form>
+            </div>
+
+            <div
+              th:if="${#lists.isEmpty(users)}"
+              style="padding: 1rem; color: #999; text-align: center"
+            >
+              <small>No conversations found.</small>
+            </div>
+          </div>
+
+          <!-- Chat Window -->
+          <div class="chat-window" th:if="${activeUser != null}">
+            <!-- Chat Header -->
+            <div class="chat-header">
+              <div
+                class="user-avatar"
+                style="width: 35px; height: 35px; font-size: 0.8rem"
+                th:text="${#strings.substring(activeUser.name != null and !activeUser.name.isEmpty() ? activeUser.name : 'U', 0, 2).toUpperCase()}"
+              >
+                JD
+              </div>
+              <div style="flex: 1; margin-left: 1rem">
+                <h6
+                  style="margin: 0; color: #3e2723"
+                  th:text="${activeUser.name != null ? activeUser.name : activeUser.email}"
+                >
+                  John Doe
+                </h6>
+                <small style="color: #999">Online</small>
+              </div>
+              <span
+                style="
+                  width: 12px;
+                  height: 12px;
+                  background-color: #28a745;
+                  border-radius: 50%;
+                  display: inline-block;
+                "
+              ></span>
+            </div>
+
+            <!-- Dynamic Chat Messages Box -->
+            <div class="chat-messages" id="chatMessages">
+              <div
+                th:each="msg : ${chatHistory}"
+                class="message"
+                th:classappend="${msg.sender.id == currentUser.id} ? 'sent' : 'received'"
+              >
+                <div class="message-bubble" th:text="${msg.content}">
+                  Hi Admin, I'm looking for "The Great Gatsby"...
+                </div>
+                <div
+                  class="message-time"
+                  th:text="${#temporals.format(msg.timestamp, 'hh:mm a')}"
+                >
+                  12:40 PM
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form
+              th:action="@{/messages/admin/send}"
+              method="post"
+              class="chat-input"
+              style="margin: 0"
+            >
+              <input
+                type="hidden"
+                name="receiverId"
+                th:value="${activeUser.id}"
+              />
+              <button
+                type="button"
+                style="
+                  background: none;
+                  border: none;
+                  font-size: 1.2rem;
+                  cursor: pointer;
+                "
+              >
+                📎
+              </button>
+              <input
+                type="text"
+                name="content"
+                placeholder="Type your message..."
+                id="messageInput"
+                required
+                autocomplete="off"
+              />
+              <button
+                type="submit"
+                style="
+                  background-color: #6f4e37;
+                  color: white;
+                  border: none;
+                  border-radius: 8px;
+                  padding: 0.75rem 1.5rem;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Send
+              </button>
+            </form>
+          </div>
+
+          <!-- Placeholder When No Active User -->
+          <div
+            class="chat-window"
+            th:if="${activeUser == null}"
+            style="display: flex; align-items: center; justify-content: center"
+          >
+            <div style="text-align: center; color: #999">
+              <p>
+                💬 Select a conversation from the sidebar to start chatting.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // Chat Box ကို အမြဲတမ်း အောက်ဆုံး (စာသစ်) ရောက်အောင် Auto Scroll လုပ်ပေးခြင်း
+      window.onload = function () {
+        const messagesDiv = document.getElementById("chatMessages");
+        if (messagesDiv) {
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+      };
+    </script>
+  </body>
+</html>

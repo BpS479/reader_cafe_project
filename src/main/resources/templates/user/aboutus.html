@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Cafe - About Us</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Font Awesome 6 (Free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+     <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+        --bg-cream: #fcf9f2;
+        --deep-charcoal: #1e1a1a;
+        --soft-coral: #ed8171;
+        --warm-mustard: #e3b15a;
+        --sage-green: #8db5a4;
+        --dusty-rose: #d6a2a8;
+        --golden: #d4a373;
+        --deep-teal: #2f4f4f;
+        --light-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+        --transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #f8f4f0;
+            color: #2c1810;
+            overflow-x: hidden;
+        }
+
+        /* ---- Soft Background Elements ---- */
+        .bg-decoration {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-decoration-1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(245, 212, 184, 0.15), transparent 70%);
+        }
+        .bg-decoration-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(200, 170, 150, 0.12), transparent 70%);
+        }
+        .bg-decoration-3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(230, 210, 190, 0.08), transparent 70%);
+        }
+
+        /* navigation */
+        /* ===== NAVBAR ===== */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 18px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 999;
+        transition: var(--transition);
+        background: transparent;
+        margin-bottom: 10px;
+      }
+
+      .navbar.scrolled {
+        background: rgba(252, 249, 242, 0.8);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 2px 24px rgba(0, 0, 0, 0.04);
+        padding: 12px 48px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--deep-charcoal);
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+
+      .logo i {
+        color: var(--soft-coral);
+        font-size: 30px;
+        animation: floatIcon 3.6s ease-in-out infinite;
+      }
+      @keyframes floatIcon {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-8px) rotate(2deg);
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--deep-charcoal);
+        font-weight: 500;
+        font-size: 15px;
+        opacity: 0.7;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 0;
+        height: 2.5px;
+        background: var(--soft-coral);
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .nav-actions i {
+        font-size: 20px;
+        color: var(--deep-charcoal);
+        opacity: 0.6;
+        transition: var(--transition);
+        cursor: pointer;
+      }
+
+      .nav-actions i:hover {
+        opacity: 1;
+        color: var(--soft-coral);
+        transform: scale(1.12) rotate(2deg);
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(
+          145deg,
+          var(--soft-coral),
+          var(--warm-mustard)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(242, 139, 122, 0.3);
+      }
+
+      .avatar:hover {
+        transform: scale(1.08) rotate(-3deg);
+        box-shadow: 0 8px 24px rgba(242, 139, 122, 0.4);
+      }
+
+
+        
+
+        /* ---- Main Content ---- */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            padding: 100px 40px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---- About Hero ---- */
+        .about-hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .about-hero .badge {
+            display: inline-block;
+            background: rgba(184, 134, 107, 0.08);
+            border: 1px solid rgba(184, 134, 107, 0.12);
+            padding: 6px 22px;
+            border-radius: 30px;
+            color: #8b5e4a;
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+        .about-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: #2c1810;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        .about-hero h1 span {
+            color: #b8866b;
+            font-style: italic;
+            position: relative;
+        }
+        .about-hero h1 span::after {
+            content: '';
+            font-size: 0.6em;
+            margin-left: 6px;
+            font-style: normal;
+        }
+        .about-hero p {
+            color: rgba(44, 24, 16, 0.6);
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin: 15px auto 0;
+            line-height: 1.9;
+            font-weight: 400;
+        }
+
+        /* ---- Section Divider ---- */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 50px 0;
+        }
+        .section-divider .line {
+            flex: 1;
+            max-width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(184, 134, 107, 0.2), transparent);
+        }
+        .section-divider .icon {
+            color: #b8866b;
+            font-size: 1.2rem;
+            opacity: 0.4;
+        }
+
+        /* ---- About Grid ---- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* ---- Soft Cards ---- */
+        .soft-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.04);
+            border: 1px solid rgba(44, 24, 16, 0.04);
+            transition: all 0.4s ease;
+        }
+        .soft-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(44, 24, 16, 0.06);
+        }
+        .soft-card .icon {
+            font-size: 2.5rem;
+            color: #b8866b;
+            margin-bottom: 15px;
+            display: inline-block;
+            background: rgba(184, 134, 107, 0.06);
+            padding: 12px;
+            border-radius: 14px;
+        }
+        .soft-card h3 {
+            color: #2c1810;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .soft-card p {
+            color: rgba(44, 24, 16, 0.6);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+        .soft-card .highlight {
+            color: #8b5e4a;
+            font-weight: 600;
+        }
+
+        /* ---- Mission & Vision ---- */
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .mission-vision .soft-card {
+            text-align: center;
+            padding: 40px 35px;
+        }
+        .mission-vision .soft-card .icon {
+            font-size: 3rem;
+            padding: 16px;
+        }
+
+        /* ---- Purpose & Future Plan Section ---- */
+        .purpose-section {
+            margin-top: 50px;
+        }
+        .purpose-section .section-title {
+            text-align: center;
+            color: #2c1810;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        .purpose-section .section-title span {
+            color: #b8866b;
+        }
+        .purpose-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        /* ---- Core Values ---- */
+        .values-section {
+            margin-top: 50px;
+        }
+        .values-section .section-title {
+            text-align: center;
+            color: #2c1810;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        .values-section .section-title span {
+            color: #b8866b;
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+        }
+        .value-item {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            border: 1px solid rgba(44, 24, 16, 0.04);
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.03);
+            transition: all 0.4s ease;
+        }
+        .value-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 35px rgba(44, 24, 16, 0.06);
+        }
+        .value-item .icon {
+            font-size: 2.2rem;
+            color: #b8866b;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        .value-item h4 {
+            color: #2c1810;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .value-item p {
+            color: rgba(44, 24, 16, 0.5);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* ---- Team Section ---- */
+        .team-section {
+            margin-top: 50px;
+        }
+        .team-section .section-title {
+            text-align: center;
+            color: #2c1810;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        .team-section .section-title span {
+            color: #b8866b;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        .team-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 1px solid rgba(44, 24, 16, 0.04);
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.03);
+            transition: all 0.4s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 35px rgba(44, 24, 16, 0.06);
+        }
+        .team-card .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5e6d3, #e6c9b5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: #8b5e4a;
+        }
+        .team-card h4 {
+            color: #2c1810;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+        .team-card p {
+            color: rgba(44, 24, 16, 0.5);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+        .team-card .social {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .team-card .social a {
+            color: rgb(44, 24, 16);
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+        .team-card .social a:hover {
+            color: #b8866b;
+        }
+
+        /* ---- Footer ---- */
+        .footer-text {
+            text-align: center;
+            margin-top: 60px;
+            color: rgba(44, 24, 16, 0.15);
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            font-weight: 300;
+            padding-bottom: 20px;
+            border-top: 1px solid rgba(44, 24, 16, 0.04);
+            padding-top: 30px;
+        }
+
+        /* OFFCANVAS */
+      /* Trigger Button */
+      .btn-open-sidebar {
+        background: #412b20;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 60px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-open-sidebar:hover {
+        background: #c48b59;
+        transform: scale(1.03);
+        box-shadow: 0 12px 30px rgba(196, 139, 89, 0.35);
+      }
+
+      /* Sidebar Custom Colors (Bootstrap overrides) */
+      .offcanvas#readerSidebar {
+        /* background: #1f140e; */
+        background-color: rgb(57, 36, 21);
+        color: #fbfbfb;
+        width: 280px;
+        border-right: 2px solid rgba(196, 139, 89, 0.25);
+      }
+
+      .offcanvas#readerSidebar .offcanvas-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .offcanvas#readerSidebar .brand-text {
+        font-family: "Playfair Display", serif;
+        font-weight: 800;
+        font-size: 24px;
+        color: #ffffff;
+      }
+
+      .offcanvas#readerSidebar .brand-text span {
+        color: #c48b59;
+      }
+
+      .offcanvas#readerSidebar .brand-icon {
+        font-size: 28px;
+        color: #c48b59;
+        margin-right: 14px;
+      }
+
+      /* Nav Links */
+      .offcanvas#readerSidebar .nav-link {
+        color: rgba(255, 255, 255, 0.65);
+        border-radius: 10px;
+        padding: 13px 20px;
+        transition: all 0.25s ease;
+      }
+
+      .offcanvas#readerSidebar .nav-link:hover {
+        background: rgba(196, 139, 89, 0.15);
+        color: #ffffff;
+        transform: translateX(5px);
+      }
+
+      .offcanvas#readerSidebar .nav-link.active {
+        background: rgba(196, 139, 89, 0.2);
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #c48b59;
+      }
+
+      .offcanvas#readerSidebar .nav-link i {
+        width: 22px;
+        color: #c48b59;
+      }
+
+      /* Logout link */
+      .offcanvas#readerSidebar .nav-link.logout {
+        color: #e07c7c;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 12px;
+        padding-top: 20px;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout i {
+        color: #e07c7c;
+      }
+
+      .offcanvas#readerSidebar .nav-link.logout:hover {
+        background: rgba(224, 124, 124, 0.12);
+        color: #ff9a9a;
+      }
+
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                padding: 12px 20px;
+                top: 10px;
+                border-radius: 30px;
+            }
+            .navbar .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .navbar .nav-links a {
+                font-size: 0.8rem;
+            }
+            .navbar .nav-actions .btn-nav {
+                padding: 6px 16px;
+                font-size: 0.75rem;
+            }
+            .main-wrapper {
+                padding: 90px 20px 40px;
+            }
+            .about-hero h1 {
+                font-size: 2rem;
+            }
+            .about-hero p {
+                font-size: 0.9rem;
+                padding: 0 15px;
+            }
+            .soft-card {
+                padding: 25px 20px;
+            }
+            .mission-vision .soft-card {
+                padding: 30px 20px;
+            }
+            .bg-decoration-1,
+            .bg-decoration-2,
+            .bg-decoration-3 {
+                display: none;
+            }
+            .values-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .team-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .purpose-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Decorations -->
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+    <div class="bg-decoration bg-decoration-3"></div>
+
+    <!-- Navigation -->
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+      <a href="#" class="logo">
+        <i class="fas fa-graduation-cap"></i>
+        Reader Cafe
+      </a>
+      <ul class="nav-links">
+        <li><a th:href="@{/user/user-dashboard}">Home</a></li>
+        <li><a th:href="@{/user/home}">Books</a></li>
+        <li><a th:href="@{/user/favorites}">Favorites</a></li>
+        <li><a>About</a></li>
+        <li><a>Contact</a></li>
+      </ul>
+      <div>
+        <button
+          class="btn-open-sidebar"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#readerSidebar"
+        >
+          <i class="fas fa-bars me-1"></i>
+        </button>
+         
+      </div>
+      <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Book Request</button> -->
+    </nav>
+ 
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Hero Section -->
+        <div class="about-hero">
+            <div class="badge">✦ Academic Project ✦</div>
+            <h1>Reader <span>Cafe</span></h1>
+            <p>
+                <strong>University of Technology (Yatanarpon CyberCity)</strong> — Project Exhibition 2026
+            </p>
+            <p style="margin-top: 10px; font-size: 0.95rem;">
+                A digital sanctuary where books and coffee meet — developed by a team of five passionate students.
+            </p>
+        </div>
+
+        <div class="section-divider">
+            <span class="line"></span>
+            <span class="icon"><i class="fas fa-book-open"></i></span>
+            <span class="line"></span>
+        </div>
+
+        <!-- Our Story - Updated -->
+        <div class="about-grid">
+            <div class="soft-card" style="grid-column: 1 / -1;">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <h3>Our Story — A Journey of Five</h3>
+                <p>
+                    <strong>Reader Cafe</strong> was born as an academic project for the 
+                    <span class="highlight">University of Technology (Yatanarpon CyberCity)</span> 
+                    Project Exhibition 2024. What started as a simple assignment quickly evolved 
+                    into a shared passion project for a team of <span class="highlight">five students</span> 
+                    who believed in the power of combining literature with technology.
+                </p>
+                <br>
+                <p>
+                    Our team came together with a simple yet ambitious goal: 
+                    <span class="highlight">"To create a digital space where people can experience 
+                    the warmth of a cozy café and the richness of a well-curated library."</span> 
+                    We wanted to build something that wasn't just functional, but meaningful — 
+                    a platform that could genuinely bring joy to readers everywhere.
+                </p>
+                <br>
+                <p>
+                    Through countless late-night coding sessions, design debates, and coffee-fueled 
+                    brainstorming meetings, we transformed our vision into reality. Reader Cafe 
+                    is the result of our collective effort, creativity, and dedication to making 
+                    reading more accessible and enjoyable for everyone.
+                </p>
+                <br>
+                <p style="color: #8b5e4a; font-weight: 500;">
+                    <i class="fas fa-quote-left" style="margin-right: 6px;"></i>
+                    This project is more than just a grade — it's our gift to the world of readers.
+                    <i class="fas fa-quote-right" style="margin-left: 6px;"></i>
+                </p>
+            </div>
+        </div>
+
+        <!-- Our Philosophy & Community -->
+        <div class="about-grid" style="margin-top: 0;">
+            <div class="soft-card">
+                <div class="icon"><i class="fas fa-heart"></i></div>
+                <h3>Our Philosophy</h3>
+                <p>
+                    We believe that reading is not just an activity — it's a transformative experience. 
+                    Every page turned is a journey into new worlds, and every sip of coffee is a moment 
+                    of warmth, reflection, and connection. We exist to nurture this beautiful relationship 
+                    between books and coffee.
+                </p>
+            </div>
+            <div class="soft-card">
+                <div class="icon"><i class="fas fa-globe-asia"></i></div>
+                <h3>Our Community</h3>
+                <p>
+                    Reader Cafe is more than a platform — it's a home for thinkers, dreamers, 
+                    and storytellers from around the world. We foster a welcoming space where 
+                    readers can connect, share recommendations, participate in book clubs, 
+                    and grow together as a community of lifelong learners.
+                </p>
+            </div>
+        </div>
+
+        <div class="section-divider">
+            <span class="line"></span>
+            <span class="icon"><i class="fas fa-mug-hot"></i></span>
+            <span class="line"></span>
+        </div>
+
+        <!-- Mission & Vision -->
+        <div class="mission-vision">
+            <div class="soft-card">
+                <div class="icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Our Mission</h3>
+                <p>
+                    To create a cozy digital sanctuary where people can disconnect from the 
+                    overwhelming digital noise and reconnect with the timeless joy of reading, 
+                    one cup of coffee at a time. We aim to make reading accessible, enjoyable, 
+                    and deeply fulfilling for everyone, everywhere.
+                </p>
+            </div>
+            <div class="soft-card">
+                <div class="icon"><i class="fas fa-eye"></i></div>
+                <h3>Our Vision</h3>
+                <p>
+                    To build a global community of readers who share stories, ideas, and the 
+                    simple pleasure of a good book paired with a great brew. We envision a world 
+                    where everyone has access to a warm reading space — whether physical or digital — 
+                    regardless of where they are.
+                </p>
+            </div>
+        </div>
+
+        <div class="section-divider">
+            <span class="line"></span>
+            <span class="icon"><i class="fas fa-rocket"></i></span>
+            <span class="line"></span>
+        </div>
+
+        <!-- Purpose & Future Plan -->
+        <div class="purpose-section">
+            <h2 class="section-title">Our <span>Purpose</span> &amp; <span>Future</span> Plan</h2>
+            <div class="purpose-grid">
+                <div class="soft-card">
+                    <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                    <h3>Why We Built This</h3>
+                    <p>
+                        <strong>Reader Cafe</strong> was created as a response to the growing need 
+                        for meaningful digital spaces. In a world filled with endless distractions, 
+                        we wanted to build a platform that encourages <span class="highlight">focus, 
+                        reflection, and genuine connection</span> with stories and ideas.
+                    </p>
+                    <br>
+                    <p>
+                        <strong>Our core purpose</strong> is to make reading a lifestyle — not 
+                        just a hobby. We want to inspire a new generation of readers who find 
+                        joy in the written word and comfort in the ritual of enjoying a warm 
+                        beverage alongside a captivating book.
+                    </p>
+                </div>
+                <div class="soft-card">
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Future Roadmap</h3>
+                    <p>
+                        <strong>Phase 1 (2025-2026):</strong> Launch the core platform with a 
+                        curated library of 10,000+ books, audiobooks, and interactive reading 
+                        features. Establish our community through book clubs and author events.
+                    </p>
+                    <br>
+                    <p>
+                        <strong>Phase 2 (2026-2027):</strong> Expand to mobile apps (iOS &amp; Android), 
+                        introduce AI-powered book recommendations, and launch our signature 
+                        "Coffee &amp; Books" subscription box service.
+                    </p>
+                    <br>
+                    <p>
+                        <strong>Phase 3 (2028 &amp; beyond):</strong> Build physical Reader Cafe 
+                        spaces in major cities worldwide, create our own publishing imprint, 
+                        and develop a loyalty program that rewards reading and community engagement.
+                    </p>
+                </div>
+                <div class="soft-card">
+                    <div class="icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h3>Our Impact Goal</h3>
+                    <p>
+                        By 2030, we aim to have <span class="highlight">1 million active readers</span> 
+                        in our community, <span class="highlight">500+ book clubs</span> running 
+                        simultaneously, and <span class="highlight">100 physical Reader Cafe locations</span> 
+                        across 20 countries.
+                    </p>
+                    <br>
+                    <p>
+                        We also plan to launch <span class="highlight">"Read for Good"</span> — a program 
+                        where every book read on our platform contributes to providing books and education 
+                        resources to underserved communities around the world.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider">
+            <span class="line"></span>
+            <span class="icon"><i class="fas fa-star"></i></span>
+            <span class="line"></span>
+        </div>
+
+        <!-- Core Values -->
+        <div class="values-section">
+            <h2 class="section-title">Our Core <span>Values</span></h2>
+            <div class="values-grid">
+                <div class="value-item">
+                    <div class="icon"><i class="fas fa-book"></i></div>
+                    <h4>Love for Books</h4>
+                    <p>We celebrate the power of stories and the joy of reading</p>
+                </div>
+                <div class="value-item">
+                    <div class="icon"><i class="fas fa-mug-saucer"></i></div>
+                    <h4>Warm Hospitality</h4>
+                    <p>We create a welcoming space for everyone</p>
+                </div>
+                <div class="value-item">
+                    <div class="icon"><i class="fas fa-handshake"></i></div>
+                    <h4>Community First</h4>
+                    <p>We build connections that last beyond the page</p>
+                </div>
+                <div class="value-item">
+                    <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                    <h4>Continuous Innovation</h4>
+                    <p>We evolve with our readers' needs and technology</p>
+                </div>
+                <div class="value-item">
+                    <div class="icon"><i class="fas fa-globe-americas"></i></div>
+                    <h4>Global Inclusion</h4>
+                    <p>We welcome readers from all cultures and backgrounds</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider">
+            <span class="line"></span>
+            <span class="icon"><i class="fas fa-users"></i></span>
+            <span class="line"></span>
+        </div>
+
+        <!-- Team Section -->
+        <div class="team-section">
+            <h2 class="section-title">Meet Our <span>Team</span></h2>
+            <p style="text-align: center; color: rgba(44, 24, 16, 0.5); margin-bottom: 30px; font-size: 0.95rem;">
+                Five students from University of Technology (Yatanarpon CyberCity) — Class of 2024
+            </p>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <h4>Mg Bhone Pyae Sone</h4>
+                    <p>Team Lead &amp; Full-Stack Developer</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <h4>Mg Khaing Zaw Nyi</h4>
+                    <p>DevOps &amp; Data Collector &amp;Content Creator  </p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <h4>Ma Htet Inzale</h4>
+                    <p>UI/UX Designer &amp; Frontend Developer</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <h4>Ma Hnin Yamone Oo</h4>
+                    <p>Backend Developer &amp; Database Architect</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <h4>Ma Pyae Phyo Thant</h4>
+                    <p>Content Curator &amp; QA Tester</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                 
+            </div>
+        </div>
+
+        <div class="footer-text">✦ Reader Cafe — University of Technology (Yatanarpon CyberCity) ✦</div>
+    </div>
+
+
+    <!-- ===== OFFCANVAS SIDEBAR ===== -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="readerSidebar"
+      aria-labelledby="readerSidebarLabel"
+    >
+      <!-- Header -->
+      <div class="offcanvas-header">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-mug-saucer brand-icon"></i>
+          <span class="brand-text">Reader <span>Cafe</span></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <!-- Body -->
+      <div class="offcanvas-body">
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item">
+            <a th:href="@{/user/user-dashboard}" class="nav-link">
+              <i class="fas fa-house me-3"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/user/home}" class="nav-link">
+              <i class="fas fa-book me-3"></i> Book Catalog
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="@{/user/favorites}" class="nav-link">
+              <i class="fas fa-heart me-3"></i> Favorites
+            </a>
+          </li>
+          <!-- <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock-rotate-left me-3"></i> History
+                    </a>
+                </li> -->
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-hand-holding-heart me-3"></i> Donate
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/messages/user-messages}" class="nav-link">
+              <i class="fas fa-envelope me-3"></i> Message
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="nav-link logout">
+                <i class="fas fa-right-from-bracket me-3"></i> Logout
+              </button>
+            </form>
+          </li>
+        </ul>
+
+        <!-- Footer -->
+        <div
+          class="mt-5 pt-3 text-center"
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+          "
+        >
+          <i class="fas fa-mug-saucer me-1"></i> v2.0 · E-Library
+        </div>
+      </div>
+    </div>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
