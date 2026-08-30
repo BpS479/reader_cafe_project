@@ -223,7 +223,10 @@ public class AdminController {
             return "redirect:/admin/admin-dashboard"; // Flash attribute အလုပ်လုပ်ရန် redirect ပြန်ပေးရပါမည်
         }
 
-        int sumDownload = bookRepository.getSumDownload();
+        Integer sumDownloads = bookRepository.getSumDownload();
+        int sum = (sumDownloads != null) ? sumDownloads : 0;
+
+ 
         long totalEbooks = bookRepository.count();
         long totalReaders = userRepository.count();
         long totalMessages = messageRepository.count();
@@ -238,7 +241,7 @@ public class AdminController {
                 // .stream()
                 // .limit(5)
                 // .toList();
-         model.addAttribute("sumDownload",sumDownload);
+         model.addAttribute("sumDownload",sum);
         model.addAttribute("totalEbooks", totalEbooks);
         model.addAttribute("totalReaders", totalReaders);
         model.addAttribute("recentReaders", recentReaders);
@@ -255,7 +258,11 @@ public class AdminController {
        // model.addAttribute("downloadCount",books);
         long totalEbooks = bookRepository.count();
         
-        int sumDownload = bookRepository.getSumDownload();
+       // မူလရေးထားသော စာကြောင်းနေရာတွင် ပြင်ရန်:
+Integer totalDownloads = bookRepository.getSumDownload();
+int sum = (totalDownloads != null) ? totalDownloads : 0;
+
+
 
         int pageSize = 6;
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -271,7 +278,7 @@ public class AdminController {
         }
         model.addAttribute("requests", requestRepository.findAll());
         model.addAttribute("totalEbooks",totalEbooks);
-        model.addAttribute("sumDownload",sumDownload);
+        model.addAttribute("sumDownload",sum);
         model.addAttribute("books", bookPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", bookPage.getTotalPages());
