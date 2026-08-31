@@ -25,11 +25,17 @@
 
         <!-- PDF Viewer (ဒီနေရာမှာတော့ ဖတ်လို့ရအောင် direct URL ကိုပဲ ဆက်ထားပေးထားပါတယ်) -->
         <div style="height: 85vh;">
-            <object th:data="${book.pdfFileUrl}" type="application/pdf" width="100%" height="100%">
+            <!-- <object th:data="${book.pdfFileUrl}" type="application/pdf" width="100%" height="100%">
                 <p>Your browser does not support PDF viewing.
                     <a th:href="@{/user/books/download/{id}(id=${book.id})}">Click here to download the PDF.</a>
                 </p>
-            </object>
+            </object> -->
+            <iframe
+    th:src="@{/user/books/view/{id}(id=${book.id})}"
+    width="100%"
+    height="100%"
+    style="border: none;">
+</iframe>
         </div>
     </div>
 
