@@ -351,6 +351,57 @@ public class UserController {
         }
     }
 
+    @GetMapping("/books/view/{id}")
+public ResponseEntity<Resource> viewPdf(@PathVariable("id") Long id) {
+
+    Book book = bookRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid book Id: " + id));
+
+    try {
+        String pdfUrl = book.getPdfFileUrl();
+
+        if (pdfUrl == null || pdfUrl.trim().isEmpty()) {
+            throw new RuntimeException("PDF file URL is empty!");
+        }
+
+        // "/uploads/abc.pdf" -> "abc.pdf"
+        String fileName = pdfUrl.startsWith("/uploads/")
+                ? pdfUrl.substring(9)
+                : pdfUrl;
+
+        if (fileName.startsWith("/")) {
+            fileName = fileName.substring(1);
+        }
+
+        Path filePath = Paths.get("src/main/resources/static/uploads")
+                .resolve(fileName)
+                .toAbsolutePath()
+                .normalize();
+
+        if (!Files.exists(filePath)) {
+            throw new RuntimeException(
+                    "File not found: " + filePath
+            );
+        }
+
+        Resource resource = new UrlResource(filePath.toUri());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "inline; filename=\"" + filePath.getFileName() + "\""
+                )
+                .body(resource);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(
+                "Could not view PDF: " + e.getMessage()
+        );
+    }
+}
+
     @GetMapping("/request")
     public String showRequestForm(Model model) {
         model.addAttribute("bookRequest", new BookRequest());
