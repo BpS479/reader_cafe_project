@@ -44,6 +44,14 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteBook> favoriteBooks = new ArrayList<>();
 
+    // Comments အတွက် Cascade ထည့်ရန်
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    // Posts အတွက် Cascade
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
+
     // --- Getter and Setter ---
     public Integer getDownloadCount() {
         return downloadCount;
