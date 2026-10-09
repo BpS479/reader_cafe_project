@@ -32,9 +32,9 @@ public class AuthController {
     // public String showLoginPage() {
     // return "login";
     // }
-    @GetMapping("/index")
+    @GetMapping("/")
     public String showIndexPage() {
-        return "index";
+        return "home";
     }
     // @GetMapping("/home")
     // public String showHomePage() {
