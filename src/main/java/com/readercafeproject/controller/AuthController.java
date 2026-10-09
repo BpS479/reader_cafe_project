@@ -32,10 +32,10 @@ public class AuthController {
     // public String showLoginPage() {
     // return "login";
     // }
-   // @GetMapping("/")
-    //public String showIndexPage() {
-       // return "home";
-   // }
+   @GetMapping("/")
+   public String showIndexPage() {
+        return "redirect:/login";
+   }
     // @GetMapping("/home")
     // public String showHomePage() {
     //     return "home";
@@ -52,6 +52,16 @@ public class AuthController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model,
             Principal principal) { // <--- Principal ပါဝင်ရမည်
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // တကယ်လို့ User က Anonymous မဟုတ်ဘေ Login ဝင်ထားပြီးသားဆိုရင် Dashboard ကို
+        // တန်းပို့မယ်
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                return "redirect:/admin/admin-dashboard";
+            }
+            return "redirect:/user/user-dashboard";
+        }
 
         // long totalEbooks = bookRepository.count();
         int pageSize = 8;
