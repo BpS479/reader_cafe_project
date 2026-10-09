@@ -59,6 +59,13 @@ public class SecurityConfig {
                                                         response.sendRedirect("/user/user-dashboard");
                                                 })
                                                 .permitAll())
+
+                        // 🌟 ဒီနေရာမှာ Remember-Me Feature ကို ထည့်သွင်းလိုက်ပါတယ် 🌟
+                .rememberMe(remember -> remember
+                        .key("readerCafeSecretKey123") // Cookie Encrypt လုပ်ဖို့ သုံးမယ့် လျှို့ဝှက် Key
+                        .tokenValiditySeconds(7 * 24 * 60 * 60) // ရက်ပေါင်း ၇ ရက်အထိ Login မှတ်ထားမည် (စက္ကန့်ဖြင့်)
+                        .rememberMeParameter("remember-me") // HTML Form ထဲက Checkbox နာမည်
+                )
                                 // Logout Configuration
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout") // Logout ထွက်မယ့် URL Path
